@@ -55,22 +55,28 @@ class MainHandler(webapp.RequestHandler):
         specialEvents = memcache.get('ParkingEvents')
         if specialEvents is None:
             eventsResult = None
-            eventsResult = getParkingSpecialEvents()
-            if eventsResult is None or eventsResult.status_code != 200:
-                logging.error("Error fetching special events URL: " + eventsResult.status_code)
-                specialEvents = []
-            else:
-                specialEvents = simplejson.loads(eventsResult.content)
-                cacheexpiretime = datetime.datetime.strptime(specialEvents['CacheUntil'], "%Y-%m-%dT%H:%M:%S")
-                diff = cacheexpiretime - datetime.datetime.now()
-                seconds = (diff.days*86400) + diff.seconds
-                if seconds < 0:
-                    # if the data from scraper is stale we need to ignore it
-                    logging.error('API parking: Special events feed is stale')
-                    specialEvents = {}
+            specialEventsWarning = memcache.get('ParkingEventsServiceStatus')
+            if((specialEventsWarning < 3) or specialEventsWarning is None): 
+                eventsResult = getParkingSpecialEvents()
+                if eventsResult is None or eventsResult.status_code != 200:
+                    logging.error("Error fetching special events URL: " + eventsResult.status_code)
+                    specialEvents = []
+                    # Ignore race condition - we're not wiping out anything serious if we hit the race anyway
+                    # and the atomic incr API doesn't let you set cache expiration times
+                    memcache.set('ParkingEventsServiceStatus', 0 if specialEventsWarning is None else specialEventsWarning+1,  6*3600)
                 else:
-                    logging.info("API: Caching Special Events Parking for %d more seconds" % seconds)
-                    memcache.set('ParkingEvents', specialEvents, seconds)
+                    specialEvents = simplejson.loads(eventsResult.content)
+                    cacheexpiretime = datetime.datetime.strptime(specialEvents['CacheUntil'], "%Y-%m-%dT%H:%M:%S")
+                    diff = cacheexpiretime - datetime.datetime.now()
+                    seconds = (diff.days*86400) + diff.seconds
+                    if seconds < 0:
+                        # if the data from scraper is stale we need to ignore it
+                        logging.error('API parking: Special events feed is stale')
+                        memcache.set('ParkingEventsServiceStatus', 0 if specialEventsWarning is None else specialEventsWarning+1,  6*3600)
+                        specialEvents = {}
+                    else:
+                        logging.info("API: Caching Special Events Parking for %d more seconds" % seconds)
+                        memcache.set('ParkingEvents', specialEvents, seconds)
 		
 
         searchwindow = self.request.get_range('searchwindow', default=3, min_value=0, max_value=24)
