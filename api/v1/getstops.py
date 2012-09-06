@@ -22,7 +22,8 @@ class GetStopHandler(webapp.RequestHandler):
       # validate the request parameters
       devStoreKey = validateRequest(self.request,utils.GETSTOPS)
       if devStoreKey is None:
-          logging.debug("unable to validate the request parameters")
+          if( not (self.request.get('key') == 'kiosk' and self.request.get('stopID') == '') ):
+              logging.error("failed to validate the request parameters")
           self.response.headers['Content-Type'] = 'application/javascript'
           self.response.out.write(simplejson.dumps(utils.buildErrorResponse('-1','Illegal request parameters')))
           return

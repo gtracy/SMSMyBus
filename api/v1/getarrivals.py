@@ -30,7 +30,9 @@ class MainHandler(webapp.RequestHandler):
       # validate the request parameters
       devStoreKey = validateRequest(self.request)
       if devStoreKey is None:
-          logging.error("failed to validate the request paramters")
+          # filter out the kiosk errors from the log
+          if( not (self.request.get('key') == 'kiosk' and self.request.get('stopID') == '') ):
+              logging.error("failed to validate the request parameters")
           self.response.headers['Content-Type'] = 'application/javascript'
           self.response.out.write(simplejson.dumps(utils.buildErrorResponse('-1','Unable to validate the request. There may be an illegal developer key.')))
           return
