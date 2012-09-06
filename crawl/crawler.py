@@ -21,6 +21,7 @@ from BeautifulSoup import BeautifulSoup, Tag
 
 from data_model import RouteListing
 from data_model import StopLocation
+from data_model import DestinationListing
 from data_model import DeveloperKeys
 
 
@@ -32,7 +33,7 @@ class CrawlerHandler(webapp.RequestHandler):
         # create a new task with this link
         #crawlURL = "http://webwatch.cityofmadison.com/webwatch/Ada.aspx"
         crawlURL = URLBASE + 'r=' + routeID
-        task = Task(url='/routelist/crawlingtask', params={'crawl':crawlURL,'routeID':'00'})
+        task = Task(url='/crawl/routelist/crawlingtask', params={'crawl':crawlURL,'routeID':'00'})
         task.add('crawler')
         logging.info("Added new task for %s" % crawlURL)        
         return
@@ -69,7 +70,6 @@ class CrawlingTaskHandler(webapp.RequestHandler):
 
             # start to interrogate the results
             soup = BeautifulSoup(result.content)
-            stopUpdates = []
             for slot in soup.html.body.findAll("a","ada"):
                 logging.info("pulling out data from page... %s" % slot)
 
@@ -92,18 +92,15 @@ class CrawlingTaskHandler(webapp.RequestHandler):
                         # check for conflicts...
                         stop = db.GqlQuery("SELECT * FROM StopLocation WHERE stopID = :1", stopID).get()
                         if stop is None:
+                          logging.error("Missing stop %s which should be impossible" % stopID);
                             # add the new stop
-                            stop = StopLocation()
-                            stop.stopID = stopID
-                            stop.routeID = routeID
-                            stop.intersection = intersection.upper()
-                            stop.direction = direction.upper()
-                            stopUpdates.append(stop)  # stop.put()
-                            logging.info("ADDED StopLocation (%s) - MINUS geo location" % stopID)
-                        else:
-                            logging.info("StopLoation entity already exists for %s..." % stopID)
-                            stop.routeID = routeID
-                            stopUpdates.append(stop)
+                            # stop = StopLocation()
+                            # stop.stopID = stopID
+                            # stop.routeID = routeID
+                            # stop.intersection = intersection.upper()
+                            # stop.direction = direction.upper()
+                            # stopUpdates.append(stop)  # stop.put()
+                            # logging.info("ADDED StopLocation (%s) - MINUS geo location" % stopID)
                         
                         # pull the route and direction data from the URL
                         routeData = scrapeURL.split('?')[1]
@@ -128,27 +125,25 @@ class CrawlingTaskHandler(webapp.RequestHandler):
                         else:
                           logging.error("we found a duplicate entry!?! %s", r.scheduleURL)
                     #else: # title.split(",")[0].isdigit():
-                    elif href.find("?r=") > -1:
-                        # create a new task with this link
-                        crawlURL = CRAWL_URLBASE + href
-                        if routeID == '00':
-                            routeID = href.split('r=')[1]
-                        elif href.find("&") > -1:
-                            routeID = href.split('&')[0].split('r=')[1]
-                        task = Task(url='/routelist/crawlingtask', params={'crawl':crawlURL,'direction':title,'routeID':routeID})
-                        task.add('crawler')
-                        logging.info("Added new task for %s, direction %s, route %s" % (title.split(",")[0],title,routeID))                    
-                    # label crawler looks for titles with letters for extraction/persistence
-                    #elif title.replace('-','').replace(' ','').isalpha():
-                    #    routeData = href.split('?')[1]
-                    #    logging.info("found the route LABEL page! href: %s" % href)
-                    #    routeArgs = routeData.split('&')
-                    #    directionID = routeArgs[1].split('=')[1]
-                    #    
-                    #    l = DestinationListing.get_or_insert(title, id=directionID, label=title)
-
-            # push the vehicle updates to the datastore
-            db.put(stopUpdates)
+                    else:
+                        if href.find("?r=") > -1:
+                            # create a new task with this link
+                            crawlURL = CRAWL_URLBASE + href
+                            if routeID == '00':
+                                routeID = href.split('r=')[1]
+                            elif href.find("&") > -1:
+                                routeID = href.split('&')[0].split('r=')[1]
+                            task = Task(url='/crawl/routelist/crawlingtask', params={'crawl':crawlURL,'direction':title,'routeID':routeID})
+                            task.add('crawler')
+                            logging.info("Added new task for %s, direction %s, route %s" % (title.split(",")[0],title,routeID))
+                        # label crawler looks for titles with letters for extraction/persistence
+                        if title.replace('-','').replace(' ','').isalpha():
+                            logging.info("found the route LABEL page! href: %s" % href)
+                            routeData = href.split('?')[1]
+                            routeArgs = routeData.split('&')
+                            directionID = routeArgs[1].split('=')[1]
+                            
+                            l = DestinationListing.get_or_insert(title, id=directionID, label=title)
                                         
         except apiproxy_errors.DeadlineExceededError:
             logging.error("DeadlineExceededError exception!?")
@@ -249,8 +244,8 @@ class RouteListHandler(webapp.RequestHandler):
 ## end ScrapeRouteStopHandler
 def main():
   logging.getLogger().setLevel(logging.DEBUG)
-  application = webapp.WSGIApplication([('/routelist/configure/(.*)', CrawlerHandler),
-                                        ('/routelist/crawlingtask', CrawlingTaskHandler),
+  application = webapp.WSGIApplication([('/crawl/routelist/configure/(.*)', CrawlerHandler),
+                                        ('/crawl/routelist/crawlingtask', CrawlingTaskHandler),
                                         ('/routelist/(.*)', RouteListHandler),
                                         ('/droptable/(.*)', DropTableHandler),
                                         ('/debug/drop/(.*)', StartTableDrop),

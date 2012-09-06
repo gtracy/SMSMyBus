@@ -26,7 +26,7 @@ class PortStopsHandler(webapp.RequestHandler):
         while stops is not None and len(stops) > 0:
             for s in stops:
                 # create a new task for each stop
-                task = Task(url='/port/stop/task/', 
+                task = Task(url='/gtfs/port/stop/task/', 
                             params={'stopID':s.stopID,
                                     'name':s.name,
                                     'description':s.description,
@@ -67,41 +67,21 @@ class PortStopTask(webapp.RequestHandler):
         lon         = self.request.get('lon')
         direction   = self.request.get('direction')
         
-        # check to see if the stop exists already
-        stops = db.GqlQuery("select * from StopLocation where stopID = :1", stopID).fetch(50)
+        # if it doesn't, create a new one
+        s = StopLocation()
+        stop_template = s
         
-        # if it does, append the stop description
-        if stops is not None and len(stops) > 0:
-            for s in stops:
-                stop_template = s
-                s.description = description
-                stop_list.append(s)
-        else:
-            # if it doesn't, create a new one
-            s = StopLocation()
-            stop_template = s
-            
-            s.stopID = stopID
-            s.intersection = name.split('(')[0].rstrip()
-            s.direction = direction
-            s.description = description
-            s.location = GeoPt(lat,lon)
-            stop_list.append(s)
+        s.stopID = stopID
+        s.intersection = name.split('(')[0].rstrip()
+        s.direction = direction
+        s.description = description
+        s.location = GeoPt(lat,lon)
+        s.update_location()
+        stop_list.append(s)
                 
         # put the new stop in the datastore
         db.put(stop_list)
         logging.info('done updating stop locations for stopID %s' % stopID)
-        
-        # find all of the RouteListings with this stopID
-        # loop through them and update the StopLocation references
-        routes = db.GqlQuery("select * from RouteListing where stopID = :1", stopID).fetch(50)
-        for r in routes:
-            r.stopLocation = stop_template
-            route_list.append(r)
-        
-        # save the route updates
-        db.put(route_list)
-        logging.info('done updating %s route listings for stopID %s' % (str(len(routes)),stopID) )
         
         self.response.set_status(200)
 
@@ -110,8 +90,8 @@ class PortStopTask(webapp.RequestHandler):
 
 def main():
   logging.getLogger().setLevel(logging.DEBUG)
-  application = webapp.WSGIApplication([('/port/stops', PortStopsHandler),
-                                        ('/port/stop/task/', PortStopTask),
+  application = webapp.WSGIApplication([('/gtfs/port/stops', PortStopsHandler),
+                                        ('/gtfs/port/stop/task/', PortStopTask),
                                         ],
                                        debug=True)
   wsgiref.handlers.CGIHandler().run(application)
