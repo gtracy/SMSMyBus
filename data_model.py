@@ -12,7 +12,6 @@ class PhoneLog(db.Model):
 # note that a stop extends GeoModel   
 class StopLocation(GeoModel):
     stopID       = db.StringProperty()
-    routeID      = db.StringProperty()
     intersection = db.StringProperty()
     direction    = db.StringProperty()
     description  = db.StringProperty(multiline=True)
@@ -33,7 +32,6 @@ class RouteListing(db.Model):
     direction    = db.StringProperty()
     stopID       = db.StringProperty()
     scheduleURL  = db.StringProperty(indexed=False)
-    stopLocation = db.ReferenceProperty(StopLocation,collection_name="stops")    
 ## end RouteListing
 
 class DestinationListing(db.Model):
