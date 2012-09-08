@@ -1,5 +1,5 @@
 application: smsmybus-hrd
-version: parkingapi
+version: labelfix
 runtime: python
 api_version: 1
 
@@ -21,7 +21,7 @@ handlers:
 
 - url: /gadgets/metro/.*
   script: gadgets/gadget.py
-  
+
 - url: /gadgets/stop.xml
   static_files: gadgets/stop.xml
   upload: gadgets/stop.xml
@@ -32,14 +32,14 @@ handlers:
 
 - url: /js
   static_dir: web/js
-  
+
 - url: /css
   static_dir: web/css
-  
+
 - url: /img/(.*)
   static_files: web/img/\1
   upload: web/img/(.*)
-  
+
 - url: /favicon.ico
   static_files: web/img/favicon.ico
   upload: web/img/favicon.ico
@@ -47,11 +47,11 @@ handlers:
 - url: /apple-touch-icon.png
   static_files: web/img/apple-touch-icon.png
   upload: web/img/apple-touch-icon.png
-    
+
 - url: /robots.txt
   static_files: web/robots.txt
   upload: web/robots.txt
-    
+
 - url: /loggingtask
   script: main.py
   login: admin
@@ -62,7 +62,7 @@ handlers:
 - url: /admin.*
   script: admin.py
   login: admin
-  
+
 #
 # SMS service
 #
@@ -91,24 +91,19 @@ handlers:
 #
 # data CRAWLER access
 #
-- url: /crawl/.*
-  script: crawl/crawl-stop-locations.py
-  login: admin
-
-- url: /routelist/.*
+- url: /crawl/routelist/.*
   script: crawl/crawler.py
   login: admin
 
-- url: /port/.*
+- url: /gtfs/port/.*
   script: crawl/load_gtfs.py
   login: admin
 
-# parking API
-- url: /api/v1/getparking
-  script: api/v1/getparking.py
-  
 #
 # API access
+- url: /api/v1/getparking
+  script: api/v1/getparking.py
+
 - url: /api/v1/getarrivals
   script: api/v1/getarrivals.py
 
@@ -117,10 +112,10 @@ handlers:
 
 - url: /api/v1/get(stops|nearbystops|stoplocation|debug)
   script: api/v1/getstops.py
-  
+
 - url: /api/v1/getvehicles
   script: api/v1/getvehicles.py
-  
+
 - url: /api/location
   script: api/feed.py
   login: admin
@@ -128,11 +123,11 @@ handlers:
 - url: /api/(.*\.(html|css|js))
   static_files: api/\1
   upload: api/(.*\.(html|css|js))
-  
+
 - url: /api/v1/createdevkey/.*
   script: api/v1/getarrivals.py
   login: admin
-  
+
 - url: /api.*
   static_files: api/index.html
   upload: api/index.html
@@ -141,7 +136,7 @@ handlers:
 - url: /droptable/.*
   script: crawl/crawler.py
   login: admin
-  
+
 # debug : create entities
 - url: /debug/create/.*
   script: crawl/crawler.py
@@ -151,28 +146,28 @@ handlers:
 - url: /debug/drop/DeveloperRequest
   script: crawl/crawler.py
   login: admin
-  
+
 #
 # Custom kiosk displays
 #
 - url: /kiosk
   script: web/kiosk/kiosk.py
-  
+
 - url: /motherfools.*
   static_files: web/motherfools/index.html
   upload: web/motherfools/index.html
-    
+
 - url: /supranet.*
   static_files: web/supranet/index.html
   upload: web/supranet/index.html
-  
+
 - url: /sector67.*
   static_files: web/sector67/index.html
   upload: web/sector67/index.html
- 
+
 - url: /labs/.*
   script: labs/mapit.py
-   
+
 #
 # catch all...
 #

@@ -128,6 +128,16 @@ def handle_result(rpc,stopID,routeID,sid,directionID):
                 arrival = slot['title']
                 textBody = arrival.replace('P.M.','pm').replace('A.M.','am')
                 valid = True
+
+                # the next column includes very specific details about
+                # where the route is going. some buses take multiple 
+                # routes to a destination point. that detail is here
+                direction = slot.parent.nextSibling.string.strip().lower().title()
+                # contort this string to minimize it
+                # ... strip off the "To" on the front end
+                direction = direction.replace('To','').strip()
+                # ... correct the transfer point acronym we broke in the title() call above
+                direction = direction.replace('Tp','TP')
                 
                 # the original implementaiton leveraged the datastore to store and
                 # ultimately sort the results when we got all of the routes back.
@@ -138,7 +148,7 @@ def handle_result(rpc,stopID,routeID,sid,directionID):
                 stop.routeID = routeID
                 stop.sid = sid
                 stop.arrivalTime = textBody
-                stop.destination = directionLabel
+                stop.destination = direction
           
                 # turn the arrival time into absolute minutes
                 hours = int(arrival.split(':')[0])
@@ -148,7 +158,8 @@ def handle_result(rpc,stopID,routeID,sid,directionID):
                 arrivalMinutes = (hours * 60) + minutes
                 stop.time = arrivalMinutes
           
-                stop.text = textBody + " toward %s" % directionLabel
+                stop.text = "%s %s" % (textBody,direction)
+                #stop.text = textBody + " toward %s" % directionLabel
                 
                 # instead of shoving this in the datastore, we're going to shove
                 # it in a local variable and retrieve it with the sid later

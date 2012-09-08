@@ -18,8 +18,6 @@ from data_model import RouteListing
 
 class MapHandler(webapp.RequestHandler):
     def get(self):
-      self.response.out.write('Snap. This data has gotten so big, it needs to be optimized. This page is disabled for now. :(')
-      return
       
       # review the results for popular stops
       reqs = getRequestedStops();
@@ -49,6 +47,9 @@ class MapHandler(webapp.RequestHandler):
       median = 2.5
       logging.debug('found a total of %s requests with a median %s' % (str(totalReqs),str(median)))
       for key,value in stopLocations.items():
+          if value is None:
+              continue;
+
           stopID = key.split(':')[0]
           # normalized value = count/median * %Total + (count-median)+ base
           weight = (float(reqs[stopID]) / median) + float(reqs[stopID]) - median + 75.0
@@ -159,7 +160,7 @@ class CollectorHandler(webapp.RequestHandler):
                 location = l.location
                 stopKey = l.stopID + ':loc'
                 if l.stopID in validStops and stopKey not in stopLocs:
-                    #logging.debug('adding location %s for stopID %s' % (location,l.stopID))
+                    logging.debug('adding location %s for stopID %s' % (location,l.stopID))
                     stopLocs[stopKey] = location
           else:
               logging.debug('No more stop locations left in the query!')
