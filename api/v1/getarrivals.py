@@ -236,7 +236,7 @@ application = webapp.WSGIApplication([('/api/v1/getarrivals', MainHandler),
                                      debug=True)
 
 def main():
-  logging.getLogger().setLevel(logging.DEBUG)
+  logging.getLogger().setLevel(logging.ERROR)
   run_wsgi_app(application)
   #wsgiref.handlers.CGIHandler().run(application)
 

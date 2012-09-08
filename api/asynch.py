@@ -135,7 +135,7 @@ def handle_result(rpc,stopID,routeID,sid,directionID):
                 direction = slot.parent.nextSibling.string.strip().lower().title()
                 # contort this string to minimize it
                 # ... strip off the "To" on the front end
-                direction = direction.replace('To','').strip()
+                direction = direction.replace('To ','',1).strip()
                 # ... correct the transfer point acronym we broke in the title() call above
                 direction = direction.replace('Tp','TP')
                 
