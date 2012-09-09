@@ -93,14 +93,6 @@ class CrawlingTaskHandler(webapp.RequestHandler):
                         stop = db.GqlQuery("SELECT * FROM StopLocation WHERE stopID = :1", stopID).get()
                         if stop is None:
                           logging.error("Missing stop %s which should be impossible" % stopID);
-                            # add the new stop
-                            # stop = StopLocation()
-                            # stop.stopID = stopID
-                            # stop.routeID = routeID
-                            # stop.intersection = intersection.upper()
-                            # stop.direction = direction.upper()
-                            # stopUpdates.append(stop)  # stop.put()
-                            # logging.info("ADDED StopLocation (%s) - MINUS geo location" % stopID)
                         
                         # pull the route and direction data from the URL
                         routeData = scrapeURL.split('?')[1]
@@ -120,6 +112,7 @@ class CrawlingTaskHandler(webapp.RequestHandler):
                           route.direction = directionID
                           route.stopID = stopID
                           route.scheduleURL = timeEstimatesURL
+                          route.stopLocation = stop
                           route.put()
                           logging.info("added new route listing entry to the database!")
                         else:

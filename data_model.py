@@ -32,6 +32,7 @@ class RouteListing(db.Model):
     direction    = db.StringProperty()
     stopID       = db.StringProperty()
     scheduleURL  = db.StringProperty(indexed=False)
+    stopLocation = db.ReferenceProperty(StopLocation,collection_name="stops")
 ## end RouteListing
 
 class DestinationListing(db.Model):
