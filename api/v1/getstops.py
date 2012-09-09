@@ -249,11 +249,11 @@ def routeRequest(routeID,destination):
     
     # @fixme memcache these results!
     if destination is not None:
-        q = db.GqlQuery('select * from StopLocation where routeID = :1 and direction = :2 order by routeID', routeID, destination)
+        q = db.GqlQuery('select * from RouteListing where route = :1 and direction = :2 order by route', routeID, destination)
     else:
-        q = db.GqlQuery('select * from StopLocation where routeID = :1 order by routeID', routeID)
-    stops = q.fetch(200)
-    if stops is None:
+        q = db.GqlQuery('select * from RouteListing where route = :1 order by route', routeID)
+    routes = q.fetch(500)
+    if routes is None:
         response_dict = {'status':'0',
                          'info':'No stops found'
                         }
@@ -265,17 +265,17 @@ def routeRequest(routeID,destination):
                     }    
     
     stop_results = []
-    for s in stops:
-        if s.location is None:
+    for r in routes:
+        stop = r.stopLocation
+        if stop is None:
             logging.error('API: ERROR, no location!?')
-        else:
-            logging.debug('API: latitude is %s' % s.location.lat)
+            continue
             
-        stop_results.append(dict({'stopID':s.stopID,
-                          'intersection':s.intersection,
-                          'latitude':'0.0' if s.location is None else s.location.lat,
-                          'longitude':'0.0' if s.location is None else s.location.lon,
-                          'destination':s.direction,                          
+        stop_results.append(dict({'stopID' : stop.stopID,
+                          'intersection' : stop.intersection,
+                          'latitude' : stop.location.lat,
+                          'longitude' : stop.location.lon,
+                          'destination' : stop.direction,                          
                           }))
     
     # add the populated stop details to the response

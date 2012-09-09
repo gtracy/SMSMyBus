@@ -1,5 +1,5 @@
-application: smsmybus-hrd
-version: labelfix
+application: smsmybus-test
+version: getstopsfix
 runtime: python
 api_version: 1
 
