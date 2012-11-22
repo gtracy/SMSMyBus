@@ -116,7 +116,7 @@ def buildErrorResponse(error,description):
 #
 def afterHours():
       ltime = time.localtime()
-      ltime_hour = ltime.tm_hour - 5
+      ltime_hour = ltime.tm_hour - 6
       ltime_hour += 24 if ltime_hour < 0 else 0
       if ltime_hour > 1 and ltime_hour < 6:
 	      return True
