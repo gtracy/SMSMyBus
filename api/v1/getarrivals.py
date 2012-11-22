@@ -213,25 +213,8 @@ def routeVehicleRequest(routeID, vehicleID, devStoreKey):
 ## end stopRouteRequest()
 
 
-class DevKeyHandler(webapp.RequestHandler):
-    def get(self,key=""):
-        if key == "":
-          logging.error("Illegal access to dev key handler - missing key");
-          return
-
-        dev = DeveloperKeys()
-        dev.developerName = "Testing"
-        dev.developerKey = key
-        dev.developerEmail = "gtracy@gmail.com"
-        dev.requestCounter = 0
-        dev.errorCounter = 0
-        dev.put()
-        
-## end DevKeyHandler
-
 
 application = webapp.WSGIApplication([('/api/v1/getarrivals', MainHandler),
-                                      ('/api/v1/createdevkey/(.*)', DevKeyHandler),
                                       ],
                                      debug=True)
 
