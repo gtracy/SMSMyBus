@@ -21,7 +21,7 @@ class EmailRequestHandler(webapp.RequestHandler):
       logging.debug("email body arguments %s" % body)
 
       if body.lower().find('parking') > -1:
-          logging.info('parking request via XMPP')
+          logging.info('parking request via email')
           response = api_bridge.getparking()
       else:
           ## magic ##

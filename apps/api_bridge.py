@@ -57,7 +57,7 @@ def getarrivals(request, result_count=3):
               result = urlfetch.fetch(url)
               done = True;
             except urlfetch.DownloadError:
-              logging.error("Error loading page (%s)... sleeping" % loop)
+              logging.debug("Error loading page (%s)... sleeping" % loop)
               time.sleep(2)
               loop = loop+1
 
@@ -112,7 +112,7 @@ def getparking():
               result = urlfetch.fetch(url)
               done = True;
             except urlfetch.DownloadError:
-              logging.error("Error loading page (%s)... sleeping" % loop)
+              logging.debug("Error loading page (%s)... sleeping" % loop)
               time.sleep(2)
               loop = loop+1
 

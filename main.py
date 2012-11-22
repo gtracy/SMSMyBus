@@ -31,6 +31,7 @@ class EventLoggingHandler(webapp.RequestHandler):
       else:
       	  caller = self.request.get('phone')
       # log this event...
+      logging.debug('logging caller: %s' % caller)
       log = PhoneLog()
       log.phone = caller
       log.body = self.request.get('inboundBody')
