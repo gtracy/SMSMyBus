@@ -157,6 +157,13 @@
 		padding: 10px 150px 2px 150px;
 		margin:0;
 	}
+	#footer .resources {
+		margin-left: 12px;
+	}
+
+.resources td {
+	padding: 8px;
+}
 
 .direction {
     font-size: 50px;
