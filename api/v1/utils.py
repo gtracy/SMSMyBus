@@ -7,7 +7,25 @@ from google.appengine.api import memcache
 from google.appengine.ext import db
 from google.appengine.datastore import entity_pb
 
+from stathat import StatHat
+import config
 from data_model import DeveloperRequest
+
+def noop():
+    logging.debug('noop called')
+## end
+
+def apiStatCount():
+    stathat = StatHat()
+    stathat.post_count(config.STATHAT_USER_KEY,config.STATHAT_API_COUNT_STAT_KEY,1,noop)
+
+def apiErrorCount():
+    stathat = StatHat()
+    stathat.post_count(config.STATHAT_USER_KEY,config.STATHAT_API_ERROR_STAT_KEY,1,noop)
+
+def apiTimeStat(stat_key,value):
+    stathat = StatHat()
+    stathat.post_value(config.STATHAT_USER_KEY,stat_key,value,noop)
 
 def validateDevKey(devKey):
 

@@ -25,6 +25,7 @@ class MainHandler(webapp.RequestHandler):
         return
     
     def get(self):
+        utils.apiStatCount()
         events = {}
         
         loop = 0

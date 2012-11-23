@@ -10,6 +10,7 @@ from django.utils import simplejson
 
 from api.v1 import utils
 from api import asynch
+import config
 
 from data_model import DeveloperKeys
 
@@ -22,9 +23,11 @@ class MainHandler(webapp.RequestHandler):
         return
     
     def get(self):
-      
+      start = time.time()
+      utils.apiStatCount()
+
       if utils.afterHours() is True:
-          # don't run these jobs during "off" hours
+        # don't run these jobs during "off" hours
 	      json_response = utils.buildErrorResponse('-1','The Metro service is not currently running')
 
       # validate the request parameters
@@ -70,6 +73,7 @@ class MainHandler(webapp.RequestHandler):
           self.response.headers['Content-Type'] = 'application/json'
           response = simplejson.dumps(json_response)
       
+      utils.apiTimeStat(config.STATHAT_API_GETARRIVALS_TIME_KEY,((time.time()-start)*1000))
       self.response.out.write(response)
 
 ## end RequestHandler

@@ -15,6 +15,7 @@ from api.v1 import utils
 class MainHandler(webapp.RequestHandler):
     
     def get(self):
+      utils.apiStatCount()
       
       # validate the request parameters
       devStoreKey = validateRequest(self.request)

@@ -107,6 +107,7 @@ def handle_result(rpc,stopID,routeID,sid,directionID):
         result = rpc.get_result()
         done = True;
     except urlfetch.DownloadError:
+         utils.apiErrorCount()
          logging.error("API: Error loading page. route %s, stop %s" % (routeID,stopID))
          if result:
             logging.error("API: Error status: %s" % result.status_code)

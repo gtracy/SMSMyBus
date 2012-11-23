@@ -1,5 +1,5 @@
-application: smsmybus-test
-version: getstopsfix
+application: smsmybus-hrd
+version: stathat
 runtime: python
 api_version: 1
 

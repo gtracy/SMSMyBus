@@ -24,7 +24,8 @@ class StaticAPIs(db.Model):
 class MainHandler(webapp.RequestHandler):
     
     def get(self):
-      
+      utils.apiStatCount()
+
       # validate the request parameters
       devStoreKey = validateRequest(self.request,utils.GETROUTES)
       if devStoreKey is None:

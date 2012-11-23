@@ -18,7 +18,8 @@ from data_model import StopLocation
 class GetStopHandler(webapp.RequestHandler):
     
     def get(self):
-      
+      utils.apiStatCount()
+
       # validate the request parameters
       devStoreKey = validateRequest(self.request,utils.GETSTOPS)
       if devStoreKey is None:
@@ -72,6 +73,7 @@ class GetStopHandler(webapp.RequestHandler):
 class GetStopLocationHandler(webapp.RequestHandler):
     
     def get(self):
+      utils.apiStatCount()
       
       # validate the request parameters
       devStoreKey = validateRequest(self.request,utils.GETSTOPLOCATION)
@@ -120,6 +122,7 @@ class GetStopLocationHandler(webapp.RequestHandler):
 class GetNearbyStopsHandler(webapp.RequestHandler):
     
     def get(self):
+      utils.apiStatCount()
       
       # validate the request parameters
       devStoreKey = validateRequest(self.request,utils.GETNEARBYSTOPS)
