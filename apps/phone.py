@@ -104,7 +104,8 @@ class PhoneRequestStopHandler(webapp.RequestHandler):
       logging.debug('phone results are %s' % textBody)
       
       # create an event to log the event
-      task = Task(url='/loggingtask', params={'phone':self.request.get('Caller'),
+      task = Task(url='/loggingtask', params={'from':self.request.get('Caller'),
+                                              'to':self.request.get('Called'),
                                               'inboundBody':requestArgs,
                                               'sid':self.request.get('SmsSid'),
                                               'outboundBody':textBody,})

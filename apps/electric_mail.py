@@ -46,7 +46,8 @@ class EmailRequestHandler(webapp.RequestHandler):
       message.send()
 
       # create an event to log the event
-      task = Task(url='/loggingtask', params={'phone':inbound_message.sender,
+      task = Task(url='/loggingtask', params={'from':inbound_message.sender,
+                                              'to':inbound_message.to,
                                               'inboundBody':body,
                                               'sid':'email',
                                               'outboundBody':response,})

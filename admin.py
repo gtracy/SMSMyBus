@@ -124,7 +124,8 @@ class SMSResponseHandler(webapp.RequestHandler):
             logging.debug("the admin console is sending and SMS to %s with the message, %s" % (phone,text))
       
             # log the event...
-            task = Task(url='/loggingtask', params={'phone':phone,
+            task = Task(url='/loggingtask', params={'from':phone,
+                                                    'to':phone,
                                                     'inboundBody':text,
                                                     'sid':'admin request',
                                                     'outboundBody':text,})

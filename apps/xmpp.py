@@ -30,7 +30,8 @@ class XmppHandler(webapp.RequestHandler):
       response = response.replace('Route','\nRoute')
 
       # create an event to log the request
-      task = Task(url='/loggingtask', params={'phone':message.sender,
+      task = Task(url='/loggingtask', params={'from':message.sender,
+                                              'to':message.to,
                                               'inboundBody':message.body,
                                               'sid':'xmpp',
                                               'outboundBody':response,})

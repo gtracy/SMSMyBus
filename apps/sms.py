@@ -45,7 +45,8 @@ class SMSRequestHandler(webapp.RequestHandler):
               response = response[0:140]
 
       # create an event to log the request
-      task = Task(url='/loggingtask', params={'phone':self.request.get('From'),
+      task = Task(url='/loggingtask', params={'from':self.request.get('From'),
+                                              'to':self.request.get('To'),
                                               'inboundBody':self.request.get('Body'),
                                               'sid':self.request.get('SmsSid'),
                                               'outboundBody':response,})
@@ -73,10 +74,11 @@ def filter_the_abusers(caller):
             memcache.incr(caller,1)
         else:
             # create an event to log the quota problem
-            task = Task(url='/loggingtask', params={'phone':self.request.get('From'),
-                                            'inboundBody':self.request.get('Body'),
-                                            'sid':self.request.get('SmsSid'),
-                                            'outboundBody':'exceeded quota',})
+            task = Task(url='/loggingtask', params={'from':self.request.get('From'),
+                                                    'to':self.request.get('To'),
+                                                    'inboundBody':self.request.get('Body'),
+                                                    'sid':self.request.get('SmsSid'),
+                                                    'outboundBody':'exceeded quota',})
             task.add('eventlogger')
             return True
     return False

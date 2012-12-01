@@ -26,15 +26,16 @@ class MainHandler(webapp.RequestHandler):
 class EventLoggingHandler(webapp.RequestHandler):
     def post(self):
       # normalize the XMPP requests
-      if self.request.get('phone').find('@'):
-          caller = self.request.get('phone').split('/')[0]
+      if self.request.get('from').find('@'):
+          caller = self.request.get('from').split('/')[0]
       else:
-      	  caller = self.request.get('phone')
+      	  caller = self.request.get('from')
       # log this event...
       logging.debug('logging caller: %s' % caller)
       log = PhoneLog()
       log.phone = caller
-      log.body = self.request.get('inboundBody')
+      log.to    = self.request.get('to')
+      log.body  = self.request.get('inboundBody')
       log.smsID = self.request.get('sid')
       log.outboundSMS = self.request.get('outboundBody')
       log.put()
