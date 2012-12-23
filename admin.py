@@ -25,6 +25,67 @@ import gdata.spreadsheet.text_db
 import twilio
 import config
 
+class OutreachHandler(webapp.RequestHandler):
+    def get(self):
+      user = users.get_current_user()
+      if user and users.is_current_user_admin():
+          greeting = ("Welcome, %s! (<a href=\"%s\">sign out</a>)" %
+                      (user.nickname(), users.create_logout_url("/")))
+      else:
+          greeting = ("<a href=\"%s\">Sign in</a>." %
+                        users.create_login_url("/"))
+
+      total = 0
+      callers = []
+      logs = db.GqlQuery("SELECT * FROM PhoneLog WHERE date > DATETIME(2012,08,15,0,0,0) ORDER BY date ASC").fetch(limit=None)
+      for result in logs:
+        if result.phone.find('+1') >= 0:
+          try:
+            index = callers.index(result.phone)
+          except ValueError:
+            callers.append(result.phone)
+
+      # add the counter to the template values
+      template_values = {'greeting':greeting,
+                         'callers':callers,
+                         }
+        
+      # create a page that provides a form for sending an SMS message
+      path = os.path.join(os.path.dirname(__file__), 'web/outreach.html')
+      self.response.out.write(template.render(path,template_values))
+
+## end
+
+class SendSMSOutreach(webapp.RequestHandler):
+    def post(self):
+      callers = []
+      logs = db.GqlQuery("SELECT * FROM PhoneLog WHERE date > DATETIME(2012,08,15,0,0,0) ORDER BY date ASC").fetch(limit=None)
+      for result in logs:
+        if result.phone.find('+1') >= 0:
+          try:
+            index = callers.index(result.phone)
+          except ValueError:
+            callers.append(result.phone)
+
+      for phone in callers:
+        logging.info("Send outreach SMS to %s" % phone)
+        account = twilio.Account(config.ACCOUNT_SID, config.ACCOUNT_TOKEN)
+        sms = {
+               'From' : config.CALLER_ID,
+               'To'   : phone,
+               'Body' : self.request.get('text'),
+               }
+        try:
+            account.request('/%s/Accounts/%s/SMS/Messages' % (config.API_VERSION, config.ACCOUNT_SID),
+                            'POST', sms)
+        except Exception, e:
+            logging.error("Twilio REST error: %s" % e)
+
+
+      self.response.out.write('success');
+
+## end
+
 class AdminHandler(webapp.RequestHandler):
     def get(self):
       user = users.get_current_user()
@@ -142,7 +203,7 @@ class SMSResponseHandler(webapp.RequestHandler):
             logging.error("illegal access to the admin console for sending sms messages!?! %s" % user.email())
             return('Not so fast!')
             
-## end SendSMSHandler()
+## end
 
 class Histogram(webapp.RequestHandler):
     def get(self):
@@ -343,13 +404,17 @@ class SendSMSHandler(webapp.RequestHandler):
                           'POST', sms)
       except Exception, e:
           logging.error("Twilio REST error: %s" % e)
+
+      self.response.out.write('success');
                         
 ## end SendSMSHandler
 
 
 application = webapp.WSGIApplication([('/admin.html', AdminHandler),
+                                      ('/admin/outreach', OutreachHandler),
                                       ('/admin/sendsmstask', SMSResponseHandler),
                                       ('/admin/sendsms', SendSMSHandler),
+                                      ('/admin/sendoutreach', SendSMSOutreach),
                                       ('/admin/histogram', Histogram),
                                       ('/admin/persistcounters', PersistCounterHandler),
                                       ('/admin/dailyreport', DailyReportHandler),
