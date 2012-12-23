@@ -13,19 +13,12 @@
     <script type="text/javascript">
       $(document).ready(function() {
         $("#request-form").submit(function() {
-          $("#form-container").slideUp("slow");
           var args = "phone="+$('#phone').val()+"&text="+$('#text').val()
           $.ajax({
             type: "POST",
             url: "/admin/sendsms",
             data: args,
             success: function(response) {
-              if( response.indexOf("Oops") >= 0 ) {
-                $("#form-container").slideDown("fast");
-                $("#form-answer").replaceWith('<div id="form-answer"><p style="color: red;font-weight: bold">'+response+'</p></div>');
-              } else {
-                $("#form-answer").replaceWith('<div id="form-answer"><h2>'+response+'</h2></div><hr>');
-              }
             } // success function
           }); // .ajax
         }); // submit form
