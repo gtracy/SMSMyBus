@@ -1,82 +1,119 @@
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html>
-  <head>
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>SMSMyBus - Get real-time arrival estimates for your bus</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="A telephone application that lets you check Madison bus schedules in real time.">
-    <meta name="keywords" content="Twilio, bus schedule, SMS, madison, metro, mymetro, mymetrobus, google app engine, cloud computing, telephone, telephony, smsmybus">
+    <meta name="author" content="greg tracy">
+    <meta name="keywords" content="Metro, Madison Metro, bus schedule, SMS, madison, mymetro, mymetrobus, telephone, telephony, smsmybus, twilio">
     <meta name="google-site-verification" content="H9cmKbLovDFqlBKn-lLv7ojvKOQ599AKKsJ7QgrM1fA" />
-    <title>SMSMyBus - Check the bus schedule in real time</title>
-    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Le styles -->
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/apple-touch-icon.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/apple-touch-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png">
+
   </head>
 
-<body>  
+  <body>
 
-<div id="page-container">
- <div id="header">
- </div>
- <div id="description">
-  <center>SMSMyBus is a mobile telephone application that lets you find real time bus arrivals for 
-  the <a class="description-anchor" href=http://www.cityofmadison.com/metro/>Madison Metro</a>.</center>
- </div>
- 
- <div id="extras">
-  <div id="other-interfaces">
-    <p>I've turned off the SMS interface due to cost constraints. If you'd like to use SMS, you can always donate to the project using the PayPal link at the bottom, and I'll get you setup. </p>
-    <h2>More ways to find your bus!</h2>
-    <h3>Google Talk / Jabber</h3>
-    <p>Jabber your query to <strong>smsmybus@appspot.com</strong>, and we'll reply back with your results. The syntax is identical to the SMS syntax.</p>
-    <h3>Email</h3>
-    <p>Email your query to <a href=mailto:request@smsmybus.com>request@smsmybus.com</a> with the 
-    details in the subject line, and I'll reply with your details.</p>
-    <h2>Are you a developer?</h2>
-    <p>Take advantage of the <a href=/api/>SMSMyBus API</a> to build your own transit application for the Madison Metro.</p>
-    <p>The API provides access to real-time arrival estimates, location data, and more. Go check out the <a href=/api/>documentation</a>.</p>
-  </div>
- 
-  <div id="donate">
-   <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-   <input type="hidden" name="cmd" value="_s-xclick">
-   <input type="hidden" name="hosted_button_id" value="99TCXWRTE6PHW">
-   <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-   <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-   </form>
-   <br><strong>Please consider a donation to help cover our costs.</strong>
-  </div>
- 
- </div>
- <div id="spacer"></div>
- <hr>
- <div id="footer">
-  <div id="powered-by">
-     powered by:<br><br>
-     <a href=http://code.google.com/appengine/><img src="img/gae-logo.png" alt="google app engine" height="30" width="30"></a>
-     <a href=http://twilio.com><img src="img/twilio-logo.jpg" alt="twilio" height="30" width="30"></a>
-  </div>
-  <div id="me">
-   <a href=http://www.gregtracy.com>Greg Tracy</a> - <a href=http://twitter.com/gregtracy>@gregtracy</a>
-  </div>
-  <div id="contact-container">
-   terms - privacy - <a href="mailto:greg@gregtracy.com?subject=SMSMyBus%20feedback">feedback</a>
-  </div>
- </div>
-</div>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/#">SMSMyBus</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li><a href="http://api.smsmybus.com/">API</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
 
-<script type="text/javascript">
 
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-2237321-13']);
-  _gaq.push(['_trackPageview']);
+    <div class="container-fluid">
+      <div class="hero-unit">
+          <h1>SMSMyBus</h1>
+            <p>A text messaging application that lets you find real time bus arrivals for the <a class="description-anchor" href=http://www.cityofmadison.com/metro/>Madison Metro</a>.</p>
+      </div>
 
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+        <section id="resources">
+            <hr>
+            <h1>The tools <small>Some of the tools in our toolbox</small></h1>
+            <p>There are a variety of ways you can find your bus when you're on the go. All of these tools give you real-time arrival estimates based on the actual location of your bus.</p>
+            <div class="row">
+              <div class="span4">
+                <h2>Text Messages</h2>
+                 <p>We just turned this off to manage costs. :( Don't dispare - you'll soon have a chance to purchase this service. Interested?</p>
+                <p><a class="btn btn-success" href="mailto:help@smsmybus.com"><i class="icon-envelope"></i> Email us!</a></p>
+              </div>
+              <div class="span4">
+                <h2>Google Chat</h2>
+                 <p>You can chat with the service just like a friend. Just send your request to <strong>smsmybus@appspot.com</strong> in your favorite chat software and I'll help you find your bus.</p>
+             </div>
+              <div class="span4">
+                <h2>Email</h2>
+                <p>Don't like those other options? You can always use email! Just send your request to <strong>request@smsmybus.com</strong> and I'll reply with the results.</p>
+              </div>
+            </div>
+        </section>
 
-</script>
+        <section id="api">
+            <hr>
+            <h1>Developer Tools <small>Are you a developer?</small></h1>
+            <p>The same tricks used for the text messaging tools are available in a programmable web interface. The API gives you access to all of the Metro data - including the real-time arrival estimates. Get started now!</p>
+            <p><a href="http://api.smsmybus.com">http://api.smsmybus.com</a></p>
+        </section>
 
-  </body>
-</html>
+        <div class="navbar navbar-fixed-bottom">
+          <div class="navbar-inner">
+            <div class="container">
+                <ul class="nav">
+                  <li>© SMSMyBus 2010-2013</li>
+                </ul>
+            </div>
+          </div>
+        </div>
+    </div> <!-- /container -->
 
+    <!-- Le javascript
+    ================================================== -->
+    <script src="/js/jquery.js"></script>
+    <script src="/js/bootstrap-button.js"></script>
+
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-2237321-13']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+</body></html>
