@@ -42,9 +42,7 @@ def getarrivals(request, result_count=3):
 
         # package up the API web service call and make the request
         #
-        #urlbase = 'http://smsmybus-test.appspot.com'
-        urlbase = 'http://www.smsmybus.com/'
-        url = '%s/api/v1/getarrivals?key=%s&stopID=%s' % (urlbase,config.METRO_API_KEY,stopID)
+        url = '%s/v1/getarrivals?key=%s&stopID=%s' % (config.API_URL_BASE,config.METRO_API_KEY,stopID)
         if routeID is not None:
             url += '&routeID=%s' % routeID
 
@@ -102,7 +100,7 @@ def getparking():
 
         # package up the API web service call and make the request
         #
-        url = 'http://www.smsmybus.com/api/v1/getparking'
+        url = config.API_URL_BASE + 'v1/getparking'
         loop = 0
         done = False
         result = None
@@ -119,6 +117,7 @@ def getparking():
         response = '% Open :: '
         if result is None or result.status_code != 200:
             logging.error("Exiting early: error fetching API")
+            logging.error(result)
             response = 'Snap! The scheduling service is currently down. Please try again shortly'
         else:
             json_results = simplejson.loads(result.content)

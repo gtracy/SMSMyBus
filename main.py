@@ -1,6 +1,7 @@
 import os
 import wsgiref.handlers
 import logging
+import urllib
 
 from google.appengine.api import memcache
 
@@ -50,12 +51,19 @@ class ResetQuotaHandler(webapp.RequestHandler):
         self.response.set_status(200)
         return
         
+class APIRedirectHandler(webapp.RequestHandler):
+    def get(self,endpoint=None):
+        api_uri = '%sv1/%s?' % (config.API_URL_BASE,endpoint) + urllib.urlencode(self.request.params)
+        logging.info("re-direct %s" % api_uri);
+        self.redirect(api_uri);
+
         
 def main():
   logging.getLogger().setLevel(logging.DEBUG)
   application = webapp.WSGIApplication([('/', MainHandler),
                                         ('/loggingtask', EventLoggingHandler),
                                         ('/resetquotas', ResetQuotaHandler),
+                                        ('/api/v1/(.*)', APIRedirectHandler)
                                         ],
                                        debug=True)
   wsgiref.handlers.CGIHandler().run(application)

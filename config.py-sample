@@ -1,6 +1,8 @@
 EMAIL_SENDER_ADDRESS = 'you@somewhere.com'
 EMAIL_REPORT_ADDRESS = 'you@somewhere.com'
 INVALID_STOP_IDS = [0]
+URL_BASE = 'http://smsmybus.appspot.com/'
+API_URL_BASE = 'http://api.smsmybus.com/'
 GOOGLE_DOC_EMAIL = 'you@gmail.com'
 GOOGLE_DOC_PASSWORD = 'password'
 GOOGLE_DOC_KEY = 'yourgoogledockey'

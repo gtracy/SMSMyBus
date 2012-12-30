@@ -1,5 +1,5 @@
 application: smsmybus-hrd
-version: outreach
+version: apisplit
 runtime: python
 api_version: 1
 
@@ -12,45 +12,39 @@ inbound_services:
 
 builtins:
 - appstats: off
-- remote_api: off
+- remote_api: on
+- datastore_admin: on
 
 handlers:
+
 - url: /
-  static_files: web/index.html
-  upload: web/index.html
+  static_files: public/index.html
+  upload: public/index.html
 
 - url: /gadgets/metro/.*
-  script: gadgets/gadget.py
-
-- url: /gadgets/stop.xml
-  static_files: gadgets/stop.xml
-  upload: gadgets/stop.xml
-
-- url: /gadgets/style.css
-  static_files: gadgets/style.css
-  upload: gadgets/style.css
+  script: apps/gadgets/gadget.py
 
 - url: /js
-  static_dir: web/js
+  static_dir: public/js
 
 - url: /css
-  static_dir: web/css
+  static_dir: public/css
 
 - url: /img/(.*)
-  static_files: web/img/\1
-  upload: web/img/(.*)
+  static_files: public/img/\1
+  upload: public/img/(.*)
 
 - url: /favicon.ico
-  static_files: web/img/favicon.ico
-  upload: web/img/favicon.ico
+  static_files: public/img/favicon.ico
+  upload: public/img/favicon.ico
 
 - url: /apple-touch-icon.png
-  static_files: web/img/apple-touch-icon.png
-  upload: web/img/apple-touch-icon.png
+  static_files: public/img/apple-touch-icon.png
+  upload: public/img/apple-touch-icon.png
 
 - url: /robots.txt
-  static_files: web/robots.txt
-  upload: web/robots.txt
+  static_files: public/robots.txt
+  upload: public/robots.txt
 
 - url: /loggingtask
   script: main.py
@@ -89,85 +83,22 @@ handlers:
   login: admin
 
 #
-# data CRAWLER access
-#
-- url: /crawl/routelist/.*
-  script: crawl/crawler.py
-  login: admin
-
-- url: /gtfs/port/.*
-  script: crawl/load_gtfs.py
-  login: admin
-
-#
-# API access
-- url: /api/v1/getparking
-  script: api/v1/getparking.py
-
-- url: /api/v1/getarrivals
-  script: api/v1/getarrivals.py
-
-- url: /api/v1/getroutes
-  script: api/v1/getroutes.py
-
-- url: /api/v1/get(stops|nearbystops|stoplocation|debug)
-  script: api/v1/getstops.py
-
-- url: /api/v1/getvehicles
-  script: api/v1/getvehicles.py
-
-- url: /api/location
-  script: api/feed.py
-  login: admin
-
-- url: /api/(.*\.(html|css|js))
-  static_files: api/\1
-  upload: api/(.*\.(html|css|js))
-
-- url: /api/v1/createdevkey/.*
-  script: api/v1/getarrivals.py
-  login: admin
-
-- url: /api.*
-  static_files: api/index.html
-  upload: api/index.html
-
-# drop table
-- url: /droptable/.*
-  script: crawl/crawler.py
-  login: admin
-
-# debug : create entities
-- url: /debug/create/.*
-  script: crawl/crawler.py
-  login: admin
-
-# debug : start table drop in background
-- url: /debug/drop/DeveloperRequest
-  script: crawl/crawler.py
-  login: admin
-
-#
 # Custom kiosk displays
 #
 - url: /kiosk
-  script: web/kiosk/kiosk.py
+  script: apps/kiosk/kiosk.py
 
 - url: /motherfools.*
-  static_files: web/motherfools/index.html
-  upload: web/motherfools/index.html
+  static_files: public/kiosk/motherfools/index.html
+  upload: public/kiosk/motherfools/index.html
 
 - url: /supranet.*
-  static_files: web/supranet/index.html
-  upload: web/supranet/index.html
+  static_files: public/kiosk/supranet/index.html
+  upload: public/kiosk/supranet/index.html
 
 - url: /sector67.*
-  static_files: web/sector67/index.html
-  upload: web/sector67/index.html
-
-- url: /labs/.*
-  script: labs/mapit.py
-  login: admin
+  static_files: public/kiosk/sector67/index.html
+  upload: public/kiosk/sector67/index.html
 
 #
 # catch all...
