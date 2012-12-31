@@ -16,12 +16,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 from google.appengine.runtime import apiproxy_errors
 
-from main import PhoneLog
-
-import gdata.docs.service
-import gdata.spreadsheet.service
-import gdata.spreadsheet.text_db
-
+from data_model import PhoneLog
 import twilio
 import config
 
@@ -51,7 +46,7 @@ class OutreachHandler(webapp.RequestHandler):
                          }
         
       # create a page that provides a form for sending an SMS message
-      path = os.path.join(os.path.dirname(__file__), 'web/outreach.html')
+      path = os.path.join(os.path.dirname(__file__), 'views/outreach.html')
       self.response.out.write(template.render(path,template_values))
 
 ## end
@@ -171,7 +166,7 @@ class AdminHandler(webapp.RequestHandler):
                          }
         
       # create a page that provides a form for sending an SMS message
-      path = os.path.join(os.path.dirname(__file__), 'web/admin.html')
+      path = os.path.join(os.path.dirname(__file__), 'views/admin.html')
       self.response.out.write(template.render(path,template_values))
     
 ## end AdminHandler()

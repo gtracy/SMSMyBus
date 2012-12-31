@@ -50,19 +50,28 @@ class ResetQuotaHandler(webapp.RequestHandler):
         memcache.delete_multi(config.ABUSERS)
         self.response.set_status(200)
         return
-        
+## end
+
+# re-direct for old API documentation path  
+class APIDocs(webapp.RequestHandler):
+    def get(self):
+        self.redirect(config.API_URL_BASE)
+## end
+
 class APIRedirectHandler(webapp.RequestHandler):
     def get(self,endpoint=None):
         api_uri = '%sv1/%s?' % (config.API_URL_BASE,endpoint) + urllib.urlencode(self.request.params)
-        logging.info("re-direct %s" % api_uri);
+        #logging.info("re-direct %s" % api_uri);
         self.redirect(api_uri);
-
+## end
         
 def main():
   logging.getLogger().setLevel(logging.DEBUG)
   application = webapp.WSGIApplication([('/', MainHandler),
                                         ('/loggingtask', EventLoggingHandler),
                                         ('/resetquotas', ResetQuotaHandler),
+                                        ('/api', APIDocs),
+                                        ('/api/', APIDocs),
                                         ('/api/v1/(.*)', APIRedirectHandler)
                                         ],
                                        debug=True)

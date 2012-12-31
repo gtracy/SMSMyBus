@@ -36,52 +36,47 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
           <a class="brand" href="/#">SMSMyBus</a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li><a href="http://api.smsmybus.com/">developers!</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
+          <a class="btn btn-success pull-right" href="mailto:help@smsmybus.com"><i class="icon-envelope"></i> Ready to start? Email us!</a>
         </div>
       </div>
     </div>
 
 
-    <div class="container-fluid">
-      <div class="hero-unit">
-          <h1>SMSMyBus</h1>
-            <p>A text messaging application that lets you find real time bus arrivals for the <a class="description-anchor" href=http://www.cityofmadison.com/metro/>Madison Metro</a>.</p>
+    <div class="container">
+      <div class="row">
+        <div class="span10">
+            <h1>The proposition <small>SMSMyBus as a service</small></h1>
+            <p>The text messaging service has been supported out of my own pocket. And that doesn't scale. But the text messaging service has proven to be a great tool for the Madison community so I want to make it available at a price that covers my costs and doesn't make me rich.</p>
+            <p>In the next few weeks, I will turn off the free service on the current phone number for anyone that has not paid. Once you pay, the service will be re-enabled for your phone number and real-time arrival estimates will flow again!</p>
+        </div>
       </div>
-
-        <section id="resources">
-            <hr>
-            <h1>The tools <small>Some of the tools in our toolbox</small></h1>
-            <p>There are a variety of ways you can find your bus when you're on the go. All of these tools give you real-time arrival estimates based on the actual location of your bus. Simply send the stop ID (and optionally the route) to one of the following services.</p>
-            <div class="container-fluid">
-              <div class="row-fluid">
-                <div class="span4 hero-unit">
-                  <p>Find a specific route at a stop</p>
-                  <small>Find the #3 bus at stop 1101:</small>
-                  <p><code> 3 1101 </code></p>
-                </div>
-                <div class="span4 hero-unit">
-                  <p>Find all routes at a stop</p>
-                  <small>Find all buses at stop 1101:</small>
-                  <p><code> 1101 </code></p>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="span4">
-                <h2>Text Messages</h2>
-                 <p><center><img src="/img/sms-iphone.png" class="img-polaroid"></center></p>
-                 <hr>
-                <p><center>
+      <div class="row">
+        <div class="span10">
+          <hr>
+          <h1>The cost <small>Your investment in us</small></h1>
+          <p>The service will <strong>cost $2.00 per month</strong>. I will likely use PayPal and give you the option to pay on a monthly subscription basis. There will also be an option to pay for a full year at a discount - $20 per year.</p>
+          <p>Your subscription will give you an unlimited number of requests and I'll trust that you don't abuse the system.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="span10">
+          <hr>
+          <h1>The commitment <small>Our investment in your experience</small></h1>
+          <p>I want to make this an even better service and will commit to you that I will improve it. I will commit to you - a paying user - the following improvements:</p>
+          <ul>
+            <li>Implement <strong>bookmarking</strong> so you can make requests like "home" and "work" to simplify finding the buses you ride most often.</li>
+            <li>Implement <strong>statistics</strong> so you can query the system to see how often you use it.</li>
+            <li>Continuous improvements to make the service as </strong>fast and reliable</strong> as possible.</li>
+            <li>Implement <strong>Metro service announcements</strong> to keep you informed when ther are detours and service interruptions.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="span10">
+          <hr>
+          <h1>Get started</h1>
+                <p>
                   <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
                   <input type="hidden" name="cmd" value="_s-xclick">
                   <input type="hidden" name="hosted_button_id" value="DZQ5NE43NHB2U">
@@ -91,28 +86,10 @@
                   <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
                   <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
                   </form>
-                </center></p>
-                <p><center><a class="btn btn-success" href="/service-plan"><i class="icon-info-sign"> </i> Learn more</a></center></p>
-              </div>
-              <div class="span4">
-                <h2>Google Chat</h2>
-                 <p><center><img src="/img/xmpp-example.png" class="img-polaroid"></center></p>
-                 <p><strong>Free!</strong> You can chat with the service just like a friend. Just send your request to <strong>smsmybus@appspot.com</strong> in your favorite chat software and I'll help you find your bus.</p>
-             </div>
-              <div class="span4">
-                <h2>Email</h2>
-                 <p><center><img src="/img/email-example.png" class="img-polaroid"></center></p>
-                <p><strong>Free!</strong> Don't like those other options? You can always use email! Just send your request to <strong>request@smsmybus.com</strong> and I'll reply with the results.</p>
-              </div>
-            </div>
-        </section>
+                </p>
+        </div>
+      </div>
 
-        <section id="api">
-            <hr>
-            <h1>Developers <small>Are you a developer interested in building your own bus app?</small></h1>
-            <p>The same tricks used for the text messaging tools are available in a programmable web interface. The API gives you access to all of the Metro data - including the real-time arrival estimates. Get started now!</p>
-            <p><a href="http://api.smsmybus.com">http://api.smsmybus.com</a></p>
-        </section>
 
         <div class="navbar navbar-fixed-bottom">
           <div class="navbar-inner">
