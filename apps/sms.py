@@ -10,6 +10,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 import twilio
 import config
+import paywall
 from apps import api_bridge
 
 class SMSRequestHandler(webapp.RequestHandler):
@@ -27,16 +28,17 @@ class SMSRequestHandler(webapp.RequestHandler):
       msg = self.request.get("Body")
       logging.info("New inbound request from %s with message, %s" % (self.request.get('From'),msg))
 
-      # look out for the abusers
-      if filter_the_abusers(phone):
-          # don't reply!
-          return
-      
+      if paywall.isUserValid(phone) is False:
+          if paywall.isUserVirgin(phone) is True:
+              logging.info('Brand new caller - welcome them')
+              paywall.welcomeSolicitor(phone)
+          else:
+              # ignore caller
+              logging.info('We have seen this number before. Ignore this request')
+              return
+
       # interrogate the message body to determine what to do      
-      if msg.lower().find('invite') > -1:
-          # ... an invitation request
-          response = sendInvite(self.request)
-      elif msg.lower().find('parking') > -1:
+      if msg.lower().find('parking') > -1:
           response = api_bridge.getparking()
       else:
           ## magic ##

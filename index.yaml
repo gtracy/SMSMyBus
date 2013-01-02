@@ -5,3 +5,13 @@ indexes:
   - name: date
     direction: desc
   - name: phone
+
+- kind: PhoneLog
+  properties:
+  - name: phone
+  - name: date
+
+- kind: Caller
+  properties:
+  - name: phone
+  - name: expires

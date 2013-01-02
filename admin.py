@@ -17,8 +17,10 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.runtime import apiproxy_errors
 
 from data_model import PhoneLog
+from data_model import Caller
 import twilio
 import config
+import paywall
 
 class OutreachHandler(webapp.RequestHandler):
     def get(self):
@@ -297,6 +299,33 @@ class SendSMSHandler(webapp.RequestHandler):
                         
 ## end SendSMSHandler
 
+class AddUserHandler(webapp.RequestHandler):
+    def get(self):
+      user_phone = self.request.get('phone')
+      if( user_phone is None or user_phone == '' ):
+          logging.error("Failed to create a new user. No phone number was provided")
+          self.response.out.write('error. no phone number was provided - ?phone=')
+      else:
+          logging.info('Adding new user... %s' % user_phone)
+          q = db.GqlQuery("select * from Caller where phone = :1", user_phone)
+          new_user = q.get()
+          if( new_user is None ):
+            new_user = Caller()
+            new_user.phone = user_phone
+
+          # update the expiration date
+          twelve_months = (date.today() + timedelta(365))
+          logging.debug('account expiration %s' % twelve_months)
+          new_user.expires = twelve_months
+
+          new_user.put()
+          paywall.validateUser(new_user)
+          paywall.welcomeNewUser(user_phone)
+
+          # all done
+          self.response.out.write('success!')
+
+## end
 
 application = webapp.WSGIApplication([('/admin.html', AdminHandler),
                                       ('/admin/outreach', OutreachHandler),
@@ -306,6 +335,7 @@ application = webapp.WSGIApplication([('/admin.html', AdminHandler),
                                       ('/admin/histogram', Histogram),
                                       ('/admin/phonelog/clean/(.*)', CleanLogHandler),
                                       ('/admin/phonelog/normalize', NormalizeLogHandler),
+                                      ('/admin/adduser', AddUserHandler)
                                       ],
                                      debug=True)
 

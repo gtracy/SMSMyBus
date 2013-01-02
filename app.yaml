@@ -1,5 +1,5 @@
 application: smsmybus-hrd
-version: apisplit
+version: paywall
 runtime: python
 api_version: 1
 
