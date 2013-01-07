@@ -32,16 +32,7 @@ class OutreachHandler(webapp.RequestHandler):
           greeting = ("<a href=\"%s\">Sign in</a>." %
                         users.create_login_url("/"))
 
-      total = 0
-      callers = []
-      logs = db.GqlQuery("SELECT * FROM PhoneLog WHERE date > DATETIME(2012,08,15,0,0,0) ORDER BY date ASC").fetch(limit=None)
-      for result in logs:
-        if result.phone.find('+1') >= 0:
-          try:
-            index = callers.index(result.phone)
-          except ValueError:
-            callers.append(result.phone)
-
+      callers = db.GqlQuery("SELECT * FROM Caller").fetch(limit=None)
       # add the counter to the template values
       template_values = {'greeting':greeting,
                          'callers':callers,
@@ -55,21 +46,13 @@ class OutreachHandler(webapp.RequestHandler):
 
 class SendSMSOutreach(webapp.RequestHandler):
     def post(self):
-      callers = []
-      logs = db.GqlQuery("SELECT * FROM PhoneLog WHERE date > DATETIME(2012,08,15,0,0,0) ORDER BY date ASC").fetch(limit=None)
-      for result in logs:
-        if result.phone.find('+1') >= 0:
-          try:
-            index = callers.index(result.phone)
-          except ValueError:
-            callers.append(result.phone)
-
-      for phone in callers:
-        logging.info("Send outreach SMS to %s" % phone)
+      callers = db.GqlQuery("SELECT * FROM Caller").fetch(limit=None)
+      for friend in callers:
+        logging.info("Send outreach SMS to %s" % friend.phone)
         account = twilio.Account(config.ACCOUNT_SID, config.ACCOUNT_TOKEN)
         sms = {
                'From' : config.CALLER_ID,
-               'To'   : phone,
+               'To'   : friend.phone,
                'Body' : self.request.get('text'),
                }
         try:
@@ -306,6 +289,8 @@ class AddUserHandler(webapp.RequestHandler):
           logging.error("Failed to create a new user. No phone number was provided")
           self.response.out.write('error. no phone number was provided - ?phone=')
       else:
+          # prepend +1 on the number
+          user_phone = '+1' + user_phone
           logging.info('Adding new user... %s' % user_phone)
           q = db.GqlQuery("select * from Caller where phone = :1", user_phone)
           new_user = q.get()
