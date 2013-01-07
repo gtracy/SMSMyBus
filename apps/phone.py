@@ -8,7 +8,8 @@ from google.appengine.api.labs.taskqueue import Task
 from google.appengine.ext import webapp
 
 import twilio
-import config 
+import config
+import paywall
 from apps import api_bridge
 
 class PhoneRequestStartHandler(webapp.RequestHandler):
@@ -25,15 +26,21 @@ class PhoneRequestStartHandler(webapp.RequestHandler):
 
       # setup the response to get the recording from the caller
       r = twilio.Response()
-      g = r.append(twilio.Gather(action=config.URL_BASE+"phone/listenforbus",
-                                 method=twilio.Gather.GET,
-                                 timeout=10,
-                                 finishOnKey="#"))
-      g.append(twilio.Say("Welcome to SMS My Bus!"))
-      g.append(twilio.Say("Enter the bus number using the keypad. Press the pound key to submit.", 
-                          voice=twilio.Say.MAN,
-                          language=twilio.Say.ENGLISH, 
-                          loop=1))
+
+      phone = self.request.get("From")
+      if paywall.isUserValid(phone) is True:
+          g = r.append(twilio.Gather(action=config.URL_BASE+"phone/listenforbus",
+                                     method=twilio.Gather.GET,
+                                     timeout=10,
+                                     finishOnKey="#"))
+          g.append(twilio.Say("Welcome to SMS My Bus!"))
+          g.append(twilio.Say("Enter the bus number using the keypad. Press the pound key to submit.", 
+                              voice=twilio.Say.MAN,
+                              language=twilio.Say.ENGLISH, 
+                              loop=1))
+      else:
+          g = r.append(twilio.Say("Welcome to SMS My Bus. This service requires a subscription. Please visit us at sms my bus dot com for details"))
+
       self.response.out.write(r)
         
 ## end PhoneRequestStartHandler
