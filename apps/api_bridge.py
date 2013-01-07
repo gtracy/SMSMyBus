@@ -1,6 +1,7 @@
 import logging
 import time
 
+from google.appengine.api import mail
 from google.appengine.api import urlfetch
 from django.utils import simplejson
 
@@ -49,7 +50,7 @@ def getarrivals(request, result_count=3):
         loop = 0
         done = False
         result = None
-        while not done and loop < 2:
+        while not done and loop < 3:
             try:
               # go fetch the webpage for this route/stop!
               result = urlfetch.fetch(url)
@@ -88,6 +89,14 @@ def getarrivals(request, result_count=3):
         # bogus request
         response = 'Your message must be either... stopID -or- routeID stopID'
 
+        # email bogus requests back to me
+        message = mail.EmailMessage()
+        message.sender = config.EMAIL_SENDER_ADDRESS
+        message.to = config.EMAIL_REPORT_ADDRESS
+        message.subject = 'Bogus SMB request'
+        message.body = request
+        message.send()
+
     logging.info('returning results... %s' % response)
     return response
  
@@ -100,7 +109,7 @@ def getparking():
 
         # package up the API web service call and make the request
         #
-        url = config.API_URL_BASE + 'v1/getparking'
+        url = config.API_URL_BASE + 'v1/getparking?key=%s' % config.METRO_API_KEY
         loop = 0
         done = False
         result = None
