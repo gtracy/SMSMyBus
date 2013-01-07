@@ -12,6 +12,7 @@ import twilio
 import config
 import paywall
 from apps import api_bridge
+from apps import meta
 
 class SMSRequestHandler(webapp.RequestHandler):
 
@@ -40,6 +41,10 @@ class SMSRequestHandler(webapp.RequestHandler):
       # interrogate the message body to determine what to do      
       if msg.lower().find('parking') > -1:
           response = api_bridge.getparking()
+      elif msg.lower().find('help') > -1:
+          response = "Bus arrival requests are either, stopID -or- routeID stopID  Send 'parking' to find parking details"
+      elif msg.lower().find('stats') > -1:
+          response = meta.getStats(phone)
       else:
           ## magic ##
           response = api_bridge.getarrivals(msg,4)
@@ -55,37 +60,12 @@ class SMSRequestHandler(webapp.RequestHandler):
       task.add('eventlogger')
 
       # setup the response SMS
-      #smsBody = "Route %s, Stop %s" % (routeID, stopID) + "\n" + response 
       r = twilio.Response()
       r.append(twilio.Sms(response))
       self.response.out.write(r)
       return
       
 ## end SMSRequestHandler
-
-
-# This function checks a list of known system abusuers and rate
-# limits their requests on the system
-def filter_the_abusers(caller):
-    # filter the troublemakers
-    if caller in config.ABUSERS:
-        counter = memcache.get(caller)
-        if counter is None:
-            memcache.set(caller,1)
-        elif int(counter) <= 3:
-            memcache.incr(caller,1)
-        else:
-            # create an event to log the quota problem
-            task = Task(url='/loggingtask', params={'from':self.request.get('From'),
-                                                    'to':self.request.get('To'),
-                                                    'inboundBody':self.request.get('Body'),
-                                                    'sid':self.request.get('SmsSid'),
-                                                    'outboundBody':'exceeded quota',})
-            task.add('eventlogger')
-            return True
-    return False
-## end
-
 
 # Create a task to send out the invitation SMS
 #
