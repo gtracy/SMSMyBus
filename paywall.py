@@ -19,13 +19,12 @@ def invalidateUser(phone):
 
 def isUserValid(phone):
 	valid = memcache.get(getKey(phone))
-	logging.info('Paywall lookup... %s' % str(valid))
+	logging.info('Paywall lookup for %s ... %s' % (phone,str(valid)))
 	if valid is None:
 		q = db.GqlQuery("select * from Caller where phone = :1 and expires >= :2", phone, date.today())
 		user = q.get()
 		if user is None:
 			logging.debug('cannot find user in db')
-			invalidateUser(phone)
 			return False
 		else:
 			logging.debug('found user in db. now validate %s' % getKey(user.phone))
@@ -52,7 +51,7 @@ def welcomeNewUser(phone):
 	# welcome the new user with an SMS message
 	welcome_message = "Welcome to SMSMyBus. You're account is now active! Just send in a stop ID to find your bus."
 	task = Task(url='/admin/sendsms', 
-		        params={'phone':user_phone,
+		        params={'phone':phone,
 	                    'sid':'new user',
 	                    'text':welcome_message
 	                    })
