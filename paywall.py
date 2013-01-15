@@ -39,8 +39,8 @@ def isUserValid(phone):
 
 def isUserVirgin(phone):
 	q = db.GqlQuery("select * from PhoneLog where phone = :1 and date > DATE('2012-12-31')", phone)
-	user = q.get()
-	if user is None:
+	user_requests = q.count()
+	if user_requests < 3:
 		return True
 	else:
 		return False
@@ -49,7 +49,7 @@ def isUserVirgin(phone):
 
 def welcomeNewUser(phone):
 	# welcome the new user with an SMS message
-	welcome_message = "Welcome to SMSMyBus. You're account is now active! Just send in a stop ID to find your bus."
+	welcome_message = "Welcome to SMSMyBus. Your account is now active! Just send in a stop ID to find your bus."
 	task = Task(url='/admin/sendsms', 
 		        params={'phone':phone,
 	                    'sid':'new user',
@@ -60,7 +60,7 @@ def welcomeNewUser(phone):
 
 def welcomeSolicitor(phone):
 	# welcome the new user with an SMS message
-	welcome_message = "Welcome to SMSMyBus! These results are complimentary, but going forward you will need to signup. Please visit smsmybus.com to learn more."
+	welcome_message = "Welcome to SMSMyBus! The first three requests are complimentary, but going forward you will need to signup. Please visit smsmybus.com to learn more."
 	task = Task(url='/admin/sendsms', 
 		        params={'phone':phone,
 	                    'sid':'complimentary results',
