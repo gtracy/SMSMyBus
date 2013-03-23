@@ -25,6 +25,10 @@ handlers:
   static_files: public/service-plan.html
   upload: public/service-plan.html
 
+- url: /sms.html
+  static_files: public/sms.html
+  upload: public/sms.html
+
 - url: /gadgets/metro/.*
   script: apps/gadgets/gadget.py
 
