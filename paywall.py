@@ -18,6 +18,7 @@ def invalidateUser(phone):
 	memcache.set(getKey(phone), -1)
 
 def isUserValid(phone):
+
 	valid = memcache.get(getKey(phone))
 	logging.info('Paywall lookup for %s ... %s' % (phone,str(valid)))
 	if valid is None:
@@ -38,7 +39,7 @@ def isUserValid(phone):
 ## end isUserValid()
 
 def isUserVirgin(phone):
-	q = db.GqlQuery("select * from PhoneLog where phone = :1 and date > DATE('2012-12-31')", phone)
+	q = db.GqlQuery("select * from PhoneLog where phone = :1 and date > DATE('2014-01-04')", phone)
 	user_requests = q.count()
 	if user_requests < 3:
 		return True
