@@ -1,5 +1,5 @@
 application: smsmybus-hrd
-version: paywall-features
+version: adwords-support
 runtime: python
 api_version: 1
 
@@ -25,9 +25,9 @@ handlers:
   static_files: public/service-plan.html
   upload: public/service-plan.html
 
-- url: /sms.html
-  static_files: public/sms.html
-  upload: public/sms.html
+- url: /(.*html)
+  static_files: public/\1
+  upload: public/(.*html)
 
 - url: /gadgets/metro/.*
   script: apps/gadgets/gadget.py
