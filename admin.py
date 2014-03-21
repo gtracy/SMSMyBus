@@ -22,6 +22,37 @@ import twilio
 import config
 import paywall
 
+class ServiceReminderHandler(webapp.RequestHandler):
+
+    def get(self):
+      logging.info('Fetch list of expired callers')
+      logging.info('Date: %s' % date.today())
+      users = db.GqlQuery("select * from Caller where expires < :1 ORDER BY expires DESC", date.today()).fetch(limit=None)
+      for u in users:
+        logging.info(u.phone)
+        logging.info(u.expires)
+      path = os.path.join(os.path.dirname(__file__), 'views/reminder.html')
+      self.response.out.write(template.render(path,{"users":users}))
+
+    def post(self):
+      logging.error('Processing reminder post handler')
+      logging.error(self.request.get('text'))
+      users = db.GqlQuery("select * from Caller where expires < :1 ORDER BY expires DESC", date.today()).fetch(limit=None)
+      for u in users:
+        logging.info("Send reminder SMS to %s" % u.phone)
+        account = twilio.Account(config.ACCOUNT_SID, config.ACCOUNT_TOKEN)
+        sms = {
+               'From' : config.CALLER_ID,
+               'To'   : u.phone,
+               'Body' : self.request.get('text'),
+               }
+        try:
+            account.request('/%s/Accounts/%s/SMS/Messages' % (config.API_VERSION, config.ACCOUNT_SID),
+                            'POST', sms)
+        except Exception, e:
+            logging.error("Twilio REST error: %s" % e)
+## end
+
 class OutreachHandler(webapp.RequestHandler):
     def get(self):
       user = users.get_current_user()
@@ -37,7 +68,7 @@ class OutreachHandler(webapp.RequestHandler):
       template_values = {'greeting':greeting,
                          'callers':callers,
                          }
-        
+
       # create a page that provides a form for sending an SMS message
       path = os.path.join(os.path.dirname(__file__), 'views/outreach.html')
       self.response.out.write(template.render(path,template_values))
@@ -75,7 +106,7 @@ class AdminHandler(webapp.RequestHandler):
       else:
           greeting = ("<a href=\"%s\">Sign in</a>." %
                         users.create_login_url("/"))
-              
+
       # do some analysis on the request history...
       total = 0
       callers = dict()
@@ -98,14 +129,14 @@ class AdminHandler(webapp.RequestHandler):
                     callers[e.phone] += 1
                 else:
                     callers[e.phone] = 1
-                    
+
                 # add up all of the unique stop IDs
                 requestString = e.body.split()
                 if len(requestString) >= 2:
                     stopID = requestString[1]
                 elif len(requestString) > 0:
                     stopID = requestString[0]
-                    
+
                 if len(requestString) > 0 and stopID.isdigit() and len(stopID) == 4:
                     if stopID in reqs:
                         reqs[stopID] += 1
@@ -124,7 +155,7 @@ class AdminHandler(webapp.RequestHandler):
                                'counter':value,
                              })
       uniques = len(sorted_callers)
-      
+
       # display some recent call history
       results = []
       q = db.GqlQuery("SELECT * FROM PhoneLog ORDER BY date DESC")
@@ -149,11 +180,11 @@ class AdminHandler(webapp.RequestHandler):
                          'callers':caller_stats,
                          'events':results,
                          }
-        
+
       # create a page that provides a form for sending an SMS message
       path = os.path.join(os.path.dirname(__file__), 'views/admin.html')
       self.response.out.write(template.render(path,template_values))
-    
+
 ## end AdminHandler()
 
 class SMSResponseHandler(webapp.RequestHandler):
@@ -163,7 +194,7 @@ class SMSResponseHandler(webapp.RequestHandler):
             phone = self.request.get('phone')
             text = self.request.get('text')
             logging.debug("the admin console is sending and SMS to %s with the message, %s" % (phone,text))
-      
+
             # log the event...
             task = Task(url='/loggingtask', params={'from':phone,
                                                     'to':phone,
@@ -171,7 +202,7 @@ class SMSResponseHandler(webapp.RequestHandler):
                                                     'sid':'admin request',
                                                     'outboundBody':text,})
             task.add('eventlogger')
-            
+
             # send the SMS out...
             task = Task(url='/admin/sendsms', params={'phone':phone,
                                                     'sid':'admin console',
@@ -182,14 +213,14 @@ class SMSResponseHandler(webapp.RequestHandler):
         elif user:
             logging.error("illegal access to the admin console for sending sms messages!?! %s" % user.email())
             return('Not so fast!')
-            
+
 ## end
 
 class Histogram(webapp.RequestHandler):
     def get(self):
       histogram = dict()
       output = ''
-      
+
       startDate = date.today() - timedelta(days=7)
       endDate = date.today()
       for i in range(1,51):
@@ -204,20 +235,20 @@ class Histogram(webapp.RequestHandler):
           histogram[week] = weeklyCount
           output += '<p>'+str(i)+':'+str(weeklyCount)+'</p>'
           logging.debug('week '+str(i)+' had '+str(weeklyCount)+' requests')
-          
+
           # bump the dates backwards
           #runningTotal = len(result)
           endDate = startDate
           startDate = endDate - timedelta(days=7)
-          
+
       self.response.out.write(output)
-## end 
+## end
 
 class NormalizeLogHandler(webapp.RequestHandler):
     def get(self):
       callers = {}
       cursor = None
-      
+
       q = PhoneLog.all()
       while q is not None:
           # If the app stored a cursor during a previous request, use it.
@@ -252,9 +283,9 @@ class CleanLogHandler(webapp.RequestHandler):
             db.delete(entries)
             entries = q.fetch(500, offset)
             offset += 500
-            
+
         self.response.out.write('done deleting %s entries from %s' % (str(offset-501),the_id))
-        
+
 ## end
 
 # this handler is intended to send out SMS messages
@@ -262,9 +293,9 @@ class CleanLogHandler(webapp.RequestHandler):
 class SendSMSHandler(webapp.RequestHandler):
     def get(self):
       self.post()
-      
+
     def post(self):
-      logging.info("Outbound SMS for ID %s to %s" % 
+      logging.info("Outbound SMS for ID %s to %s" %
                    (self.request.get('sid'), self.request.get('phone')))
       account = twilio.Account(config.ACCOUNT_SID, config.ACCOUNT_TOKEN)
       sms = {
@@ -279,7 +310,7 @@ class SendSMSHandler(webapp.RequestHandler):
           logging.error("Twilio REST error: %s" % e)
 
       self.response.out.write('success');
-                        
+
 ## end SendSMSHandler
 
 class AddUserHandler(webapp.RequestHandler):
@@ -317,6 +348,7 @@ application = webapp.WSGIApplication([('/admin.html', AdminHandler),
                                       ('/admin/sendsmstask', SMSResponseHandler),
                                       ('/admin/sendsms', SendSMSHandler),
                                       ('/admin/sendoutreach', SendSMSOutreach),
+                                      ('/admin/reminder', ServiceReminderHandler),
                                       ('/admin/histogram', Histogram),
                                       ('/admin/phonelog/clean/(.*)', CleanLogHandler),
                                       ('/admin/phonelog/normalize', NormalizeLogHandler),

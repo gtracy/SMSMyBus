@@ -1,5 +1,5 @@
 application: smsmybus-hrd
-version: adwords-support
+version: subscription-reminder
 runtime: python
 api_version: 1
 
@@ -60,7 +60,7 @@ handlers:
 
 #
 # ADMIN access
-#      
+#
 - url: /admin.*
   script: admin.py
   login: admin
@@ -77,7 +77,7 @@ handlers:
 - url: /_ah/xmpp/.*
   script: apps/xmpp.py
 
-# 
+#
 # PHONE service
 #
 - url: /phone/.*
