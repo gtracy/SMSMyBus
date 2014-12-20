@@ -1,7 +1,8 @@
 application: smsmybus-hrd
-version: subscription-reminder
-runtime: python
+version: python-upgrade
+runtime: python27
 api_version: 1
+threadsafe: false
 
 derived_file_type:
 - python_precompiled
@@ -13,7 +14,12 @@ inbound_services:
 builtins:
 - appstats: off
 - remote_api: off
-- datastore_admin: on
+
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest
 
 handlers:
 
@@ -94,7 +100,7 @@ handlers:
 # Custom kiosk displays
 #
 - url: /kiosk
-  script: apps/kiosk/kiosk.py
+  script: apps.kiosk.kiosk.app
 
 - url: /motherfools.*
   static_files: public/kiosk/motherfools/index.html

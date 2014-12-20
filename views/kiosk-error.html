@@ -3,32 +3,13 @@
 <head>
     <meta name="description" content="Real time arrival estimates for the Madison Metro.">
     <meta name="keywords" content"Madison, Metro, transit, bus schedule, smsmybus">
-    <title>Madison Metro Monitor by SMSmybus</title>
+    <title>Madison Metro Monitor</title>
 
 	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
 	<meta name="robots" content="index, follow" />
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <link href="/css/kiosk.css" type="text/css" rel="stylesheet" />
 
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
-    <script type="text/javascript" src="/js/jquery.timers-1.2.js"></script>
-    <script type="text/javascript" src="/js/kiosk.js"></script>
-
-    <script type="text/javascript">
-      $(document).ready(function() {
-          getLocation('{{ stop1 }}','kiosk');
-          getLocation('{{ stop2 }}','kiosk');
-          setPage();
-      });
-      $(document).everyTime("121s",function() {
-          setPage();
-      });
-
-      function setPage() {
-          update('{{ stop1 }}', '{{ direction1 }}','kiosk');
-          update('{{ stop2 }}', '{{ direction2 }}','kiosk');
-      }
-    </script>
 </head>
 <body>
 
@@ -37,20 +18,13 @@
   <div id="clock">clock</div>
 </div>
 <div class="colmask doublepage">
-	<div class="colleft">
-		<div class="col1">
-            <div class="estimates" id="{{ stop1 }}-estimates"> </div>
-		</div>
-		<div class="col2">
-           <div class="estimates" id="{{ stop2 }}-estimates"> </div>
-		</div>
-	</div>
+  <p class="arrival"> :( the request parameters aren't valid. do you have the same number of stops and labels?</p>
 </div>
 <div id="footer">
 <p>Special thanks to The City of Madison for great buses and for providing the GPS data that powers this service</p>
    <div id="powered-by">
      <a href=http://mymetrobus.com><img src="/img/madison_metro.png" alt="Madison Metro" height="30"></a>
-     <a href=http://smsmybus.com><img src="/img/smsmybus.png" alt="smsmybus logo" height="30"></a>
+     <a href=http://smsmybus.com><img src="/img/smsmybus.png" alt="smsmybus.com logo" height="30"></a>
    </div>
 
    <div id="me">
