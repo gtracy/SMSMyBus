@@ -2,7 +2,7 @@ application: smsmybus-hrd
 version: python-upgrade
 runtime: python27
 api_version: 1
-threadsafe: false
+threadsafe: true
 
 derived_file_type:
 - python_precompiled
@@ -36,7 +36,7 @@ handlers:
   upload: public/(.*html)
 
 - url: /gadgets/metro/.*
-  script: apps/gadgets/gadget.py
+  script: apps.gadgets.gadget.application
 
 - url: /js
   static_dir: public/js
@@ -61,7 +61,7 @@ handlers:
   upload: public/robots.txt
 
 - url: /loggingtask
-  script: main.py
+  script: main.application
   login: admin
 
 #
