@@ -1,20 +1,13 @@
 import os
-import wsgiref.handlers
 import logging
+import webapp2
 from operator import itemgetter
 from datetime import date
 from datetime import timedelta
 
-from google.appengine.api import mail
-from google.appengine.api import memcache
-from google.appengine.api import users
 from google.appengine.api.labs.taskqueue import Task
-from google.appengine.ext import webapp
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
-from google.appengine.ext.webapp.util import run_wsgi_app
-
-from google.appengine.runtime import apiproxy_errors
 
 from data_model import PhoneLog
 from data_model import Caller
@@ -22,7 +15,7 @@ import twilio
 import config
 import paywall
 
-class ServiceReminderHandler(webapp.RequestHandler):
+class ServiceReminderHandler(webapp2.RequestHandler):
 
     def get(self):
       logging.info('Fetch list of expired callers')
@@ -53,7 +46,7 @@ class ServiceReminderHandler(webapp.RequestHandler):
             logging.error("Twilio REST error: %s" % e)
 ## end
 
-class OutreachHandler(webapp.RequestHandler):
+class OutreachHandler(webapp2.RequestHandler):
     def get(self):
       user = users.get_current_user()
       if user and users.is_current_user_admin():
@@ -75,7 +68,7 @@ class OutreachHandler(webapp.RequestHandler):
 
 ## end
 
-class SendSMSOutreach(webapp.RequestHandler):
+class SendSMSOutreach(webapp2.RequestHandler):
     def post(self):
       callers = db.GqlQuery("SELECT * FROM Caller").fetch(limit=None)
       for friend in callers:
@@ -97,7 +90,7 @@ class SendSMSOutreach(webapp.RequestHandler):
 
 ## end
 
-class AdminHandler(webapp.RequestHandler):
+class AdminHandler(webapp2.RequestHandler):
     def get(self):
       user = users.get_current_user()
       if user and users.is_current_user_admin():
@@ -187,7 +180,7 @@ class AdminHandler(webapp.RequestHandler):
 
 ## end AdminHandler()
 
-class SMSResponseHandler(webapp.RequestHandler):
+class SMSResponseHandler(webapp2.RequestHandler):
     def post(self):
         user = users.get_current_user()
         if user and users.is_current_user_admin():
@@ -216,7 +209,7 @@ class SMSResponseHandler(webapp.RequestHandler):
 
 ## end
 
-class Histogram(webapp.RequestHandler):
+class Histogram(webapp2.RequestHandler):
     def get(self):
       histogram = dict()
       output = ''
@@ -244,7 +237,7 @@ class Histogram(webapp.RequestHandler):
       self.response.out.write(output)
 ## end
 
-class NormalizeLogHandler(webapp.RequestHandler):
+class NormalizeLogHandler(webapp2.RequestHandler):
     def get(self):
       callers = {}
       cursor = None
@@ -272,7 +265,7 @@ class NormalizeLogHandler(webapp.RequestHandler):
 
 ## end
 
-class CleanLogHandler(webapp.RequestHandler):
+class CleanLogHandler(webapp2.RequestHandler):
     def get(self, the_id=""):
         the_id = 'request@smsmybus.com'
         logging.debug('cleaning all phonelog entries from %s' % the_id)
@@ -290,7 +283,7 @@ class CleanLogHandler(webapp.RequestHandler):
 
 # this handler is intended to send out SMS messages
 # via Twilio's REST interface
-class SendSMSHandler(webapp.RequestHandler):
+class SendSMSHandler(webapp2.RequestHandler):
     def get(self):
       self.post()
 
@@ -313,7 +306,7 @@ class SendSMSHandler(webapp.RequestHandler):
 
 ## end SendSMSHandler
 
-class AddUserHandler(webapp.RequestHandler):
+class AddUserHandler(webapp2.RequestHandler):
     def get(self):
       user_phone = self.request.get('phone')
       if( user_phone is None or user_phone == '' ):
@@ -343,7 +336,7 @@ class AddUserHandler(webapp.RequestHandler):
 
 ## end
 
-application = webapp.WSGIApplication([('/admin.html', AdminHandler),
+application = webapp2.WSGIApplication([('/admin.html', AdminHandler),
                                       ('/admin/outreach', OutreachHandler),
                                       ('/admin/sendsmstask', SMSResponseHandler),
                                       ('/admin/sendsms', SendSMSHandler),
@@ -355,12 +348,3 @@ application = webapp.WSGIApplication([('/admin.html', AdminHandler),
                                       ('/admin/adduser', AddUserHandler)
                                       ],
                                      debug=True)
-
-def main():
-  logging.getLogger().setLevel(logging.DEBUG)
-  run_wsgi_app(application)
-  #wsgiref.handlers.CGIHandler().run(application)
-
-
-if __name__ == '__main__':
-  main()

@@ -1,12 +1,7 @@
-import os
-import wsgiref.handlers
 import logging
+import webapp2
 
-from google.appengine.api import memcache
 from google.appengine.api.taskqueue import Task
-
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp.util import run_wsgi_app
 
 import twilio
 import config
@@ -14,10 +9,10 @@ import paywall
 from apps import api_bridge
 from apps import meta
 
-class SMSRequestHandler(webapp.RequestHandler):
+class SMSRequestHandler(webapp2.RequestHandler):
 
   def post(self):
-  
+
       # validate it is in fact coming from twilio
       if config.ACCOUNT_SID != self.request.get('AccountSid'):
         logging.error("Inbound request was NOT VALID.  It might have been spoofed!")
@@ -38,7 +33,7 @@ class SMSRequestHandler(webapp.RequestHandler):
               logging.info('We have seen this number before. Ignore this request')
               return
 
-      # interrogate the message body to determine what to do      
+      # interrogate the message body to determine what to do
       if msg.lower().find('parking') > -1:
           response = api_bridge.getparking()
       elif msg.lower().find('help') > -1:
@@ -64,16 +59,16 @@ class SMSRequestHandler(webapp.RequestHandler):
       r.append(twilio.Sms(response))
       self.response.out.write(r)
       return
-      
+
 ## end SMSRequestHandler
 
 # Create a task to send out the invitation SMS
 #
 def sendInvite(request):
-    
-      textBody = "You've been invited to use SMSMyBus to find real-time arrivals for your buses. Text your bus stop to this number to get started.(invited by " 
+
+      textBody = "You've been invited to use SMSMyBus to find real-time arrivals for your buses. Text your bus stop to this number to get started.(invited by "
       textBody += request.get('From') + ')'
-      
+
       # parse the message to extract and format the phone number
       # of the invitee. then create a task to send the message
       smsBody = request.get('Body')
@@ -87,17 +82,9 @@ def sendInvite(request):
             task.add('smssender')
 
       return textBody
-    
+
 ## end sendInvite()
-        
 
-def main():
-  logging.getLogger().setLevel(logging.INFO)
-  application = webapp.WSGIApplication([('/sms/request', SMSRequestHandler),
-                                        ],
-                                       debug=True)
-  wsgiref.handlers.CGIHandler().run(application)
-
-
-if __name__ == '__main__':
-  main()
+application = webapp2.WSGIApplication([('/sms/request', SMSRequestHandler),
+                                      ],
+                                     debug=True)

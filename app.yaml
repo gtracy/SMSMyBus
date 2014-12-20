@@ -68,32 +68,32 @@ handlers:
 # ADMIN access
 #
 - url: /admin.*
-  script: admin.py
+  script: admin.application
   login: admin
 
 #
 # SMS service
 #
 - url: /sms/.*
-  script: apps/sms.py
+  script: apps.sms.application
 
 #
 # XMPP service
 #
 - url: /_ah/xmpp/.*
-  script: apps/xmpp.py
+  script: apps.xmpp.application
 
 #
 # PHONE service
 #
 - url: /phone/.*
-  script: apps/phone.py
+  script: apps.phone.application
 
 #
 # Email service
 #
 - url: /_ah/mail/.+
-  script: apps/electric_mail.py
+  script: apps.electric_mail.application
   login: admin
 
 #
@@ -118,7 +118,7 @@ handlers:
 # catch all...
 #
 - url: /.*
-  script: main.py
+  script: main.application
 
 #admin_console:
 # pages:

@@ -1,18 +1,13 @@
-import os
-import wsgiref.handlers
 import logging
 import urllib
+import webapp2
 
 from google.appengine.api import memcache
-
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp import template
-from google.appengine.ext.webapp.util import run_wsgi_app
 
 from data_model import PhoneLog
 import config
 
-class MainHandler(webapp.RequestHandler):
+class MainHandler(webapp2.RequestHandler):
 
   def post(self):
       # this handler should never get called
@@ -21,10 +16,10 @@ class MainHandler(webapp.RequestHandler):
 
   def get(self):
       self.post()
-      
+
 ## end MainHandler()
 
-class EventLoggingHandler(webapp.RequestHandler):
+class EventLoggingHandler(webapp2.RequestHandler):
     def post(self):
       # normalize the XMPP requests
       if self.request.get('from').find('@'):
@@ -40,11 +35,11 @@ class EventLoggingHandler(webapp.RequestHandler):
       log.smsID = self.request.get('sid')
       log.outboundSMS = self.request.get('outboundBody')
       log.put()
-    
+
 ## end EventLoggingHandler
 
 
-class ResetQuotaHandler(webapp.RequestHandler):
+class ResetQuotaHandler(webapp2.RequestHandler):
     def get(self):
         logging.info("deleting the memcached quotas for the day...")
         memcache.delete_multi(config.ABUSERS)
@@ -52,31 +47,24 @@ class ResetQuotaHandler(webapp.RequestHandler):
         return
 ## end
 
-# re-direct for old API documentation path  
-class APIDocs(webapp.RequestHandler):
+# re-direct for old API documentation path
+class APIDocs(webapp2.RequestHandler):
     def get(self):
         self.redirect(config.API_URL_BASE)
 ## end
 
-class APIRedirectHandler(webapp.RequestHandler):
+class APIRedirectHandler(webapp2.RequestHandler):
     def get(self,endpoint=None):
         api_uri = '%sv1/%s?' % (config.API_URL_BASE,endpoint) + urllib.urlencode(self.request.params)
         #logging.info("re-direct %s" % api_uri);
         self.redirect(api_uri);
 ## end
-        
-def main():
-  logging.getLogger().setLevel(logging.DEBUG)
-  application = webapp.WSGIApplication([('/', MainHandler),
-                                        ('/loggingtask', EventLoggingHandler),
-                                        ('/resetquotas', ResetQuotaHandler),
-                                        ('/api', APIDocs),
-                                        ('/api/', APIDocs),
-                                        ('/api/v1/(.*)', APIRedirectHandler)
-                                        ],
-                                       debug=True)
-  wsgiref.handlers.CGIHandler().run(application)
 
-
-if __name__ == '__main__':
-  main()
+application = webapp2.WSGIApplication([('/', MainHandler),
+                                      ('/loggingtask', EventLoggingHandler),
+                                      ('/resetquotas', ResetQuotaHandler),
+                                      ('/api', APIDocs),
+                                      ('/api/', APIDocs),
+                                      ('/api/v1/(.*)', APIRedirectHandler)
+                                      ],
+                                     debug=True)
