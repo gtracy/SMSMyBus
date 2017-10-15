@@ -28,7 +28,7 @@ class EmailRequestHandler(webapp2.RequestHandler):
 
       # send back the reply with the results
       header = "Thanks for your request! Here are your results...\n\n"
-      footer = "\n\nThank you for using SMSMyBus!\nhttp://www.smsmybus.com"
+      footer = "\n\nThank you for using SMSMyBus!\nhttps://www.smsmybus.com"
 
       # setup the response email
       message = mail.EmailMessage()

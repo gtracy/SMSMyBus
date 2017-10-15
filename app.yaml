@@ -1,5 +1,5 @@
 application: smsmybus-hrd
-version: python-upgrade
+version: port-https
 runtime: python27
 api_version: 1
 threadsafe: true

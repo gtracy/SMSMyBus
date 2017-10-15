@@ -3,7 +3,7 @@ SMSMyBus
 This project is a civic hacking project that makes the Madison Metro bus system more accessible, 
 easier to use, and make the entire riding experience more enjoyable.
 
-http://www.smsmybus.com
+https://www.smsmybus.com
 
 The app is currently deployed on Google App Engine.
 
@@ -35,5 +35,5 @@ This project once contained the API as well but was split apart to separate the 
 at github.com/gregtracy/msn-transit-api. But note that the deployed version of the app is free to use so if you fork and modify
 this project, feel free to point at that instance of the API. All you need is a dev key.
 
-http://api.smsmybus.com
+https://api.smsmybus.com
 

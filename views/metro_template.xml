@@ -20,9 +20,9 @@
         <input style="font-size:10px;" type="text" name="stopID" size="4" maxlength="4" value="">
       </form>
 
-    <link rel="stylesheet" href="http://www.smsmybus.com/css/gadgets.css">
-    <script type="text/javascript" src="http://www.smsmybus.com/js/jquery.js"></script> 
-    <script type="text/javascript" src="http://www.smsmybus.com/js/jquery.timers-1.2.js"></script>
+    <link rel="stylesheet" href="https://www.smsmybus.com/css/gadgets.css">
+    <script type="text/javascript" src="https://www.smsmybus.com/js/jquery.js"></script> 
+    <script type="text/javascript" src="https://www.smsmybus.com/js/jquery.timers-1.2.js"></script>
 
     <script type="text/javascript">
       var metro_stopID = {{ stopID }};
@@ -50,7 +50,7 @@
           var ts = new Date().getTime();
           params = {};
           params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
-    	  gadgets.io.makeRequest("http://api.smsmybus.com/v1/getstoplocation?key=googlegadget&stopID="+metro_stopID+"&nocache="+ts,
+    	  gadgets.io.makeRequest("https://api.smsmybus.com/v1/getstoplocation?key=googlegadget&stopID="+metro_stopID+"&nocache="+ts,
                                  addressResponse,
                                  params
                                 );
@@ -60,7 +60,7 @@
           var ts = new Date().getTime();
           params = {};
           params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
-    	  gadgets.io.makeRequest("http://api.smsmybus.com/v1/getarrivals?key=googlegadget&stopID="+metro_stopID+"&nocache="+ts,
+    	  gadgets.io.makeRequest("https://api.smsmybus.com/v1/getarrivals?key=googlegadget&stopID="+metro_stopID+"&nocache="+ts,
                                  estimatesResponse,
                                  params
                                 );
