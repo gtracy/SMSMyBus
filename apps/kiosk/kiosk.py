@@ -8,7 +8,6 @@ from google.appengine.ext.webapp import template
 class MainHandler(webapp2.RequestHandler):
     def get(self, stopID=""):
       template_values = {}
-      logging.error('kiosk handler')
 
       # this end point supports two different layouts.
       #   side-by-side with two stops
@@ -40,8 +39,8 @@ class MainHandler(webapp2.RequestHandler):
           path = os.path.join(os.path.dirname(__file__), '../../views/kiosk.html')
           # self.response.out.write(template.render(path,template_values))
       elif len(stops) == 4 and len(directions) == 4:
-          logging.error('Two column KIOSK definition request for stops %s' % stops)
-          logging.error(stops)
+          logging.debug('Two column KIOSK definition request for stops %s' % stops)
+          logging.debug(stops)
           stop_list = []
           for index,s in enumerate(stops):
               stop_list.append({'stop_num' : s,'direction' : directions[index]})
