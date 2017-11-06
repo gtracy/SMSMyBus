@@ -16,6 +16,11 @@ class EmailRequestHandler(webapp2.RequestHandler):
       body = inbound_message.subject
       logging.debug("email body arguments %s" % body)
 
+      # ignore anything sent by ourselves to avoid an infinite loop
+      if inbound_message.sender == config.EMAIL_SENDER_ADDRESS:
+        self.response.set_status(200)
+        return
+
       if body.lower().find('parking') > -1:
           logging.info('parking request via email')
           response = api_bridge.getparking()
@@ -33,7 +38,7 @@ class EmailRequestHandler(webapp2.RequestHandler):
       # setup the response email
       message = mail.EmailMessage()
       message.sender = config.EMAIL_SENDER_ADDRESS
-      message.bcc = config.EMAIL_BCC_ADDRESS
+      #message.bcc = config.EMAIL_BCC_ADDRESS
       message.to = inbound_message.sender
       message.subject = 'Your Metro schedule estimates for stop %s' % getStopID(body)
       message.body = header + response + footer
