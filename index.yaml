@@ -17,6 +17,12 @@ indexes:
   - name: date
     direction: desc
 
+- kind: PhoneLog
+  properties:
+  - name: body
+  - name: date
+    direction: desc
+
 - kind: Caller
   properties:
   - name: phone
