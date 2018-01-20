@@ -39,7 +39,7 @@ function locationCallback(jsondata) {
 
 function arrivalsCallback(jsondata) {
     if( jsondata.status == "-1") {
-        $("#"+jsondata.stopID+"-estimates").replaceWith('<div id="'+jsondata.stopID+'-estimates" class="estimates"><span class="direction">'+metro_direction[jsondata.stopID]+'</span><div class="subhead"> &nbsp; &nbsp; Next bus at <span id="location">' + metro_location[jsondata.stopID] + '</span> ' + timestamp + ' estimate</div>');
+        $("#"+jsondata.stopID+"-estimates").replaceWith('<div id="'+jsondata.stopID+'-estimates" class="estimates"><span class="direction">'+metro_direction[jsondata.stopID]+'</span><div class="subhead"> &nbsp; &nbsp; Next bus at <span id="location">' + metro_location[jsondata.stopID] + '</span> ' + jsondata.timestamp + ' estimate</div>');
         $("#"+jsondata.stopID+"-estimates").append('<span class="arrival">'+jsondata.description+'</span>');
     } else {
         stopID = jsondata.stop.stopID;
