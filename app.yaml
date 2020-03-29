@@ -1,5 +1,5 @@
 application: smsmybus-hrd
-version: kiosk-blanks
+version: reset-kiosk-key
 runtime: python27
 api_version: 1
 threadsafe: true

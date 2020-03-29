@@ -9,25 +9,31 @@ function update(stopID, direction, key) {
 }
 
 function refreshTimes(stopID, Direction, key) {
-    var url = 'https://api.smsmybus.com/v1/getarrivals';
-    $.ajax({
-      type: "GET",
-      url: url,
-      data: {'key':key,'stopID':stopID},
-      dataType: 'jsonp',
-      success: arrivalsCallback,
-    }); // .ajax
+    // abusers are taking advantage of the default
+    if( key != "kiosk" ) {
+        var url = 'https://api.smsmybus.com/v1/getarrivals';
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: {'key':key,'stopID':stopID},
+            dataType: 'jsonp',
+            success: arrivalsCallback,
+        });
+    }
 } // refreshTimes
 
 function getLocation(stopID,key) {
-    var url = 'https://api.smsmybus.com/v1/getstoplocation';
-    $.ajax({
-      type: "GET",
-      url: url,
-      data: {'key':key,'stopID':stopID},
-      dataType: 'jsonp',
-      success: locationCallback,
-    }); // .ajax
+    // abusers are taking advantage of the default
+    if( key != "kiosk" ) {
+        var url = 'https://api.smsmybus.com/v1/getstoplocation';
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: {'key':key,'stopID':stopID},
+            dataType: 'jsonp',
+            success: locationCallback,
+        });
+    }
 }
 
 function locationCallback(jsondata) {
